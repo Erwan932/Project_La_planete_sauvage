@@ -13,7 +13,7 @@ public class SpawnCristal : MonoBehaviour
         {
             Instantiate(Prefab, Spawnpoint.position, Spawnpoint.rotation);
             IsSpawn = true;
-            player.canMove = true;
+            player.canMove = false;
         }
     }
 }
