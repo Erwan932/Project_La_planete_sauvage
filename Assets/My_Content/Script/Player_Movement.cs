@@ -32,7 +32,6 @@ public class Player_Movement : MonoBehaviour
         if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
-            smokeFX.Play();
         }
 
         Flip();
