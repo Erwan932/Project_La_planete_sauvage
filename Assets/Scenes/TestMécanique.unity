@@ -196,8 +196,9 @@ GameObject:
   - component: {fileID: 283958281}
   - component: {fileID: 283958280}
   - component: {fileID: 283958283}
+  - component: {fileID: 283958284}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera2D_Player
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -271,7 +272,7 @@ Transform:
   m_GameObject: {fileID: 283958279}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -321,6 +322,21 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &283958284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283958279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d872efe3a22c702479c4ecb6ab3f1b9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Camera_Movement
+  player: {fileID: 1966699276}
+  offset: {x: 0, y: 0, z: -5}
+  speed: 1
 --- !u!1 &461767857
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,12 +490,20 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.306425
+      objectReference: {fileID: 0}
+    - target: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3498853
+      objectReference: {fileID: 0}
+    - target: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.04
+      value: -0.2281
       objectReference: {fileID: 0}
     - target: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.42
+      value: -4.5203
       objectReference: {fileID: 0}
     - target: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
       propertyPath: m_LocalPosition.z
