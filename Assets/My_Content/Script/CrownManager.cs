@@ -3,60 +3,71 @@ using UnityEngine;
 
 public class CrowdManager : MonoBehaviour
 {
-    public GameObject followerPrefab;
-    public float spawnRadius = 1.5f;
+    public List<FollowerAI> recruitableFollowers;
+    public List<FollowerAI> activeFollowers = new List<FollowerAI>();
 
-    private List<GameObject> crowd = new List<GameObject>();
+    public float formationRadius = 1f;  // Rayon du cercle
 
     void Start()
     {
-        crowd.Add(gameObject); // Le player compte comme un membre
+        // Le joueur est le centre => pas dans la liste active
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
-        {
             AddFollower();
-        }
 
         if (Input.GetKeyDown(KeyCode.H))
-        {
             TakeDamage();
-        }
+
+        UpdateFormation();
     }
 
-    public void AddFollower()
+    void AddFollower()
     {
-        // Position aléatoire autour du joueur
-        Vector2 spawnPos = (Vector2)transform.position + Random.insideUnitCircle * spawnRadius;
+        if (recruitableFollowers.Count == 0) return;
 
-        GameObject newFollower = Instantiate(followerPrefab, spawnPos, Quaternion.identity);
+        FollowerAI follower = recruitableFollowers[0];
+        recruitableFollowers.RemoveAt(0);
 
-        // On donne au follower la référence du joueur
-        newFollower.GetComponent<FollowerAI>().SetTarget(transform);
+        follower.gameObject.SetActive(true);
+        follower.SetTarget(transform);
 
-        crowd.Add(newFollower);
+        activeFollowers.Add(follower);
     }
 
-    public void TakeDamage()
+    void TakeDamage()
     {
-        if (crowd.Count > 1)
+        if (activeFollowers.Count > 0)
         {
-            // Retirer le dernier follower ajouté
-            GameObject lostFollower = crowd[crowd.Count - 1];
-            crowd.RemoveAt(crowd.Count - 1);
-            Destroy(lostFollower);
+            FollowerAI lost = activeFollowers[activeFollowers.Count - 1];
+            activeFollowers.RemoveAt(activeFollowers.Count - 1);
+
+            lost.gameObject.SetActive(false);
         }
         else
         {
-            Debug.Log("GAME OVER : plus de membres !");
-            // ici tu peux lancer ta scène Game Over
+            Debug.Log("GAME OVER");
         }
     }
 
-    public int GetCrowdSize()
+    void UpdateFormation()
     {
-        return crowd.Count;
+        if (activeFollowers.Count == 0) return;
+
+        float angleStep = 360f / activeFollowers.Count;
+
+        for (int i = 0; i < activeFollowers.Count; i++)
+        {
+            float angle = i * angleStep * Mathf.Deg2Rad;
+
+            Vector2 formationPos = new Vector2(
+                transform.position.x + Mathf.Cos(angle) * formationRadius,
+                transform.position.y + Mathf.Sin(angle) * formationRadius
+            );
+
+            activeFollowers[i].SetFormationPosition(formationPos);
+        }
     }
 }

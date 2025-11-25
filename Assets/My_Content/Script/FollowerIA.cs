@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class FollowerAI : MonoBehaviour
 {
-    private Transform target;
-    public float followSpeed = 3f;
-    public float followDistance = 1f;
+    private Vector2 targetPosition;
+    public float followSpeed = 2f;
 
-    public void SetTarget(Transform t)
+    public void SetTarget(Transform player)
     {
-        target = t;
+        // Rien à faire ici pour la formation
+    }
+
+    public void SetFormationPosition(Vector2 pos)
+    {
+        targetPosition = pos;
     }
 
     void Update()
     {
-        if (target == null) return;
-
-        float distance = Vector2.Distance(transform.position, target.position);
-
-        // Se rapproche si trop loin
-        if (distance > followDistance)
-        {
-            Vector2 direction = (target.position - transform.position).normalized;
-            transform.position += (Vector3)(direction * followSpeed * Time.deltaTime);
-        }
+        transform.position = Vector2.MoveTowards(
+            transform.position,
+            targetPosition,
+            followSpeed * Time.deltaTime
+        );
     }
 }
+
