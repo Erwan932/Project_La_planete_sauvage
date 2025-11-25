@@ -1,41 +1,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class CrowdManager : MonoBehaviour
 {
-    public List<FollowerAI> recruitableFollowers;
-    public List<FollowerAI> activeFollowers = new List<FollowerAI>();
+    public List<FollowerAI> recruitableFollowers;    // Followers à recruter
+    public List<FollowerAI> activeFollowers = new List<FollowerAI>();  // Followers actifs
+    public float followDistance = 0.5f;   // Distance minimale entre les followers
 
-    public float formationRadius = 1f;  // Rayon du cercle
-
-    void Start()
-    {
-        // Le joueur est le centre => pas dans la liste active
-    }
+    private FollowerAI nearbyFollower; // Follower à portée pour recruter
 
     void Update()
     {
+        // Recruter le follower proche si appui sur E
         if (Input.GetKeyDown(KeyCode.E))
-            AddFollower();
+            TryRecruitNearbyFollower();
 
+        // Décrémenter la foule si le joueur prend des dégâts
         if (Input.GetKeyDown(KeyCode.H))
             TakeDamage();
 
-        UpdateFormation();
+        UpdateFollowers();
     }
 
-    void AddFollower()
+    void TryRecruitNearbyFollower()
     {
-        if (recruitableFollowers.Count == 0) return;
+        if (nearbyFollower == null)
+        {
+            Debug.Log("Aucun follower à proximité");
+            return;
+        }
 
-        FollowerAI follower = recruitableFollowers[0];
-        recruitableFollowers.RemoveAt(0);
-
-        follower.gameObject.SetActive(true);
-        follower.SetTarget(transform);
-
-        activeFollowers.Add(follower);
+        if (recruitableFollowers.Contains(nearbyFollower))
+        {
+            Debug.Log("Follower recruté !");
+            Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), GetComponent<Collider2D>(), true);
+            recruitableFollowers.Remove(nearbyFollower);
+            nearbyFollower.gameObject.SetActive(true);
+            activeFollowers.Add(nearbyFollower);
+            nearbyFollower = null;
+            
+        }
     }
+
 
     void TakeDamage()
     {
@@ -43,7 +50,6 @@ public class CrowdManager : MonoBehaviour
         {
             FollowerAI lost = activeFollowers[activeFollowers.Count - 1];
             activeFollowers.RemoveAt(activeFollowers.Count - 1);
-
             lost.gameObject.SetActive(false);
         }
         else
@@ -52,22 +58,38 @@ public class CrowdManager : MonoBehaviour
         }
     }
 
-    void UpdateFormation()
+    void UpdateFollowers()
     {
-        if (activeFollowers.Count == 0) return;
-
-        float angleStep = 360f / activeFollowers.Count;
+        Vector2 previousPos = transform.position;
 
         for (int i = 0; i < activeFollowers.Count; i++)
         {
-            float angle = i * angleStep * Mathf.Deg2Rad;
+            FollowerAI follower = activeFollowers[i];
 
-            Vector2 formationPos = new Vector2(
-                transform.position.x + Mathf.Cos(angle) * formationRadius,
-                transform.position.y + Mathf.Sin(angle) * formationRadius
-            );
+            Vector2 direction = previousPos - (Vector2)follower.transform.position;
+            float distance = direction.magnitude;
 
-            activeFollowers[i].SetFormationPosition(formationPos);
+            Vector2 targetPos = follower.transform.position;
+            if (distance > followDistance)
+            {
+                targetPos = (Vector2)follower.transform.position + direction.normalized * (distance - followDistance);
+            }
+
+            follower.SetFormationPosition(targetPos);
+            previousPos = follower.transform.position;
         }
+    }
+
+    // Appelé depuis le FollowerAI quand le joueur entre dans le trigger
+    public void SetNearbyFollower(FollowerAI follower)
+    {
+        nearbyFollower = follower;
+    }
+
+    // Appelé depuis le FollowerAI quand le joueur sort du trigger
+    public void ClearNearbyFollower(FollowerAI follower)
+    {
+        if (nearbyFollower == follower)
+            nearbyFollower = null;
     }
 }

@@ -4,24 +4,58 @@ public class FollowerAI : MonoBehaviour
 {
     private Vector2 targetPosition;
     public float followSpeed = 2f;
+    private bool inFormation = false;
 
-    public void SetTarget(Transform player)
+    void OnEnable()
     {
-        // Rien à faire ici pour la formation
+        targetPosition = transform.position;
+        inFormation = false;
+    }
+
+    void Update()
+    {
+        if (inFormation)
+        {
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                targetPosition,
+                followSpeed * Time.deltaTime
+            );
+        }
     }
 
     public void SetFormationPosition(Vector2 pos)
     {
         targetPosition = pos;
+        inFormation = true;
     }
 
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
+{
+    Debug.Log("TriggerEnter détecté avec : " + collision.name);
+    if (collision.CompareTag("Player"))
     {
-        transform.position = Vector2.MoveTowards(
-            transform.position,
-            targetPosition,
-            followSpeed * Time.deltaTime
-        );
+        CrowdManager manager = collision.GetComponent<CrowdManager>();
+        if (manager != null)
+        {
+            manager.SetNearbyFollower(this);
+            Debug.Log("Follower à proximité !");
+        }
     }
+}
+
+private void OnTriggerExit2D(Collider2D collision)
+{
+    if (collision.CompareTag("Player"))
+    {
+        CrowdManager manager = collision.GetComponent<CrowdManager>();
+        if (manager != null)
+        {
+            manager.ClearNearbyFollower(this);
+            Debug.Log("Follower hors de portée !");
+        }
+    }
+}
+
 }
 
