@@ -4,7 +4,6 @@ public class Player_Movement : MonoBehaviour
 {
     private float horizontal;
     private float speed = 8f;
-    private float jumpingPower = 16f;
     private bool isFacingRight = true;
     public ParticleSystem smokeFX;
 
@@ -23,28 +22,12 @@ public class Player_Movement : MonoBehaviour
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetButtonDown("Jump") && IsGrounded())
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-            smokeFX.Play();
-        }
-
-        if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0f)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
-        }
-
         Flip();
     }
 
     private void FixedUpdate()
     {
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
-    }
-
-    private bool IsGrounded()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
     private void Flip()
