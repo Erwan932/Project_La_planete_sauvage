@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     public ParticleSystem SmokeFX;
     private bool isGrounded = false;
+    public bool canMove = true;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
