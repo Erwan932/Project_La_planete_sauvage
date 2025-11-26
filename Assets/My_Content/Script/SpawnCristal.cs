@@ -6,14 +6,15 @@ public class SpawnCristal : MonoBehaviour
     public GameObject Prefab;
     private bool IsSpawn = false;
     public PlayerMovement player;
-
+    public GameObject Spawnobject;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!IsSpawn && collision.CompareTag("Player"))
         {
-            Instantiate(Prefab, Spawnpoint.position, Spawnpoint.rotation);
+           Spawnobject = Instantiate(Prefab, collision.transform.position, Quaternion.identity);
             IsSpawn = true;
             player.canMove = false;
         }
     }
+
 }

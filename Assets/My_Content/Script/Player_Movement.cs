@@ -31,12 +31,20 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
         }
 
+        if (!canMove && Input.GetMouseButtonDown(0))
+            canMove = true;
         Flip();
     }
 
     private void FixedUpdate()
     {
+        if (!canMove)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return; 
+        }
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+
     }
 
     private bool IsGrounded()
