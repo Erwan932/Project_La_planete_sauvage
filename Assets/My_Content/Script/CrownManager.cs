@@ -7,8 +7,18 @@ public class CrowdManager : MonoBehaviour
     public List<FollowerAI> recruitableFollowers;    // Followers à recruter
     public List<FollowerAI> activeFollowers = new List<FollowerAI>();  // Followers actifs
     public float followDistance = 0.5f;   // Distance minimale entre les followers
+    public FollowerAI nearbyFollower; // Follower à portée pour recruter
+    public bool playerIsHidden = false;
 
-    private FollowerAI nearbyFollower; // Follower à portée pour recruter
+    public void SetHidden(bool state)
+    {   
+        playerIsHidden = state;
+    }
+
+    public bool IsPlayerHidden()
+    {
+        return playerIsHidden;
+    }
 
     void Update()
     {
@@ -23,7 +33,7 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
     }
 
-    void TryRecruitNearbyFollower()
+    public void TryRecruitNearbyFollower()
     {
         if (nearbyFollower == null)
         {
@@ -48,7 +58,7 @@ public class CrowdManager : MonoBehaviour
     }
 
 
-    void TakeDamage()
+    public void TakeDamage()
     {
         if (activeFollowers.Count > 0)
         {
@@ -62,7 +72,7 @@ public class CrowdManager : MonoBehaviour
         }
     }
 
-    void UpdateFollowers()
+    public void UpdateFollowers()
     {
         Vector2 previousPos = transform.position;
 
