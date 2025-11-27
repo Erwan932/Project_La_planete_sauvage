@@ -6,6 +6,7 @@ public class FollowerAI : MonoBehaviour
     public float followSpeed = 2f;
     private bool inFormation = false;
     public bool IsHidden = false;
+    public GameObject tooltip;
 
 
     void OnEnable()
@@ -32,30 +33,35 @@ public class FollowerAI : MonoBehaviour
         inFormation = true;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+   private void OnTriggerEnter2D(Collider2D collision)
 {
-    Debug.Log("TriggerEnter détecté avec : " + collision.name);
     if (collision.CompareTag("Player"))
     {
+        tooltip.SetActive(true); // Affiche le tooltip
+
         CrowdManager manager = collision.GetComponent<CrowdManager>();
         if (manager != null)
         {
             manager.SetNearbyFollower(this);
-            Debug.Log("Follower à proximité !");
         }
+
+        Debug.Log("Follower à proximité !");
     }
 }
 
-private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
 {
     if (collision.CompareTag("Player"))
     {
+        tooltip.SetActive(false); // Masque le tooltip
+
         CrowdManager manager = collision.GetComponent<CrowdManager>();
         if (manager != null)
         {
             manager.ClearNearbyFollower(this);
-            Debug.Log("Follower hors de portée !");
         }
+
+        Debug.Log("Follower hors de portée !");
     }
 }
 

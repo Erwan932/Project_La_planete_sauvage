@@ -43,6 +43,7 @@ public class CrowdManager : MonoBehaviour
 
         if (recruitableFollowers.Contains(nearbyFollower))
         {
+            nearbyFollower.tooltip.SetActive(false);
             Debug.Log("Follower recruté !");
             Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), GetComponent<Collider2D>(), true);
             foreach (FollowerAI follower in activeFollowers)
