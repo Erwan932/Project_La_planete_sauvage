@@ -9,7 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem SmokeFX;
     private bool isGrounded = false;
     public bool canMove = true;
-
+    public SpawnCristal spawnCristal; 
+    public Animator animator;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
@@ -32,7 +33,9 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (!canMove && Input.GetMouseButtonDown(0))
-            canMove = true;
+        {
+            StartCoroutine(spawnCristal.BlinkAndDestroy (spawnCristal.Spawnobject, 0.5f, 0.1f));
+        }
         Flip();
     }
 
@@ -44,7 +47,6 @@ public class PlayerMovement : MonoBehaviour
             return; 
         }
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
-
     }
 
     private bool IsGrounded()
