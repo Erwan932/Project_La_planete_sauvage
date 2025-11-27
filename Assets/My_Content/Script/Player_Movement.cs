@@ -10,12 +10,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     public bool canMove = true;
     public SpawnCristal spawnCristal; 
-    public Animator animator;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Animator animators;
 
-  
+
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
@@ -35,6 +35,11 @@ public class PlayerMovement : MonoBehaviour
         if (!canMove && Input.GetMouseButtonDown(0))
         {
             StartCoroutine(spawnCristal.BlinkAndDestroy (spawnCristal.Spawnobject, 0.5f, 0.1f));
+        }
+
+        {
+            horizontal = Input.GetAxisRaw("Horizontal");
+            UpdateAnimations();
         }
         Flip();
     }
@@ -71,5 +76,11 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = true;
         }
+    }
+    private void UpdateAnimations()
+    {
+        bool isMoving = horizontal != 0;
+        animators.SetBool("IsRunning", isMoving);
+        animators.SetBool("IsJumping", !isGrounded);
     }
 }

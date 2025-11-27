@@ -14,7 +14,7 @@ public class SpawnCristal : MonoBehaviour
         if (!IsSpawn && collision.CompareTag("Player"))
         {
            Vector3 spawnPos = collision.transform.position;
-            spawnPos.y -= 0.7f;
+            spawnPos.y -= 1.25f;
             Spawnobject = Instantiate(Prefab, spawnPos, Quaternion.identity);
             player.canMove = false;
         }
