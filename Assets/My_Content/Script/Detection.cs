@@ -4,86 +4,91 @@ using UnityEngine.UI;
 
 public class DetectionZone : MonoBehaviour
 {
-public float interval;        // Temps entre deux scans
-public float flashSpeed;     // Vitesse du clignotement
-public float flashTime;        // Durée totale du scan
-public Image redOverlay;            // Image UI rouge (alpha = 0)  
-public CrowdManager crowdManager;  
+    public float interval;           // Temps entre deux scans
+    public float flashTime;          // Durée totale du scan
+    public float startFlashRate = 0.4f; // Intervalle entre flashs au début
+    public float endFlashRate = 0.05f;  // Intervalle juste avant dégâts
+    public Image redOverlay;         // UI rouge
+    public CrowdManager crowdManager;
 
-private bool scanInProgress = false;   
+    private bool scanInProgress = false;
 
-void Start()  
-{  
-    redOverlay.gameObject.SetActive(false);  
-    StartCoroutine(DetectionRoutine());  
-}  
+    void Start()
+    {
+        redOverlay.gameObject.SetActive(false);
+        StartCoroutine(DetectionRoutine());
+    }
 
-IEnumerator DetectionRoutine()  
-{  
-    while (true)  
-    {  
-        yield return new WaitForSeconds(interval);  
-        yield return StartCoroutine(ScanSequence());  
-    }  
-}  
+    IEnumerator DetectionRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(interval);
+            yield return StartCoroutine(ScanSequence());
+        }
+    }
 
-IEnumerator ScanSequence()  
-{  
-    scanInProgress = true;  
-    redOverlay.gameObject.SetActive(true);  
+    IEnumerator ScanSequence()
+    {
+        scanInProgress = true;
+        redOverlay.gameObject.SetActive(true);
 
-    float timer = 0f;  
-    bool overlayOn = false;  
+        float timer = 0f;
+        bool overlayOn = false;
 
-    // Petit délai pour que les triggers aient le temps d'être détectés  
-    yield return new WaitForSeconds(0.05f);  
+        // Petit délai pour laisser passer les triggers
+        yield return new WaitForSeconds(0.05f);
 
-    while (timer < flashTime)  
-    {  
-        timer += flashSpeed;  
-        overlayOn = !overlayOn;  
-        SetOverlayVisibility(overlayOn);  
+        while (timer < flashTime)
+        {
+            // Pourcentage du temps écoulé
+            float t = timer / flashTime;
 
-        yield return new WaitForSeconds(flashSpeed);  
-    }  
+            // On interpole la vitesse du flash : de lent à rapide
+            float currentFlashRate = Mathf.Lerp(startFlashRate, endFlashRate, t);
 
-    // À la fin du flash, appliquer le dégât si le groupe n'est pas caché  
-    if (!IsGroupHidden())  
-    {  
-        crowdManager.TakeDamage();  
-    }  
+            // Inversion état overlay
+            overlayOn = !overlayOn;
+            SetOverlayVisibility(overlayOn);
 
-    CloseScan();  
-    scanInProgress = false;  
-}  
+            yield return new WaitForSeconds(currentFlashRate);
+            timer += currentFlashRate;
+        }
 
-void SetOverlayVisibility(bool visible)  
-{  
-    Color c = redOverlay.color;  
-    c.a = visible ? 0.6f : 0f;  
-    redOverlay.color = c;  
-}  
+        // Dégâts à la fin
+        if (!IsGroupHidden())
+            crowdManager.TakeDamage();
 
-void CloseScan()  
-{  
-    SetOverlayVisibility(false);  
-    redOverlay.gameObject.SetActive(false);  
-}  
+        CloseScan();
+        scanInProgress = false;
+    }
 
-bool IsGroupHidden()  
-{  
-    // Joueur visible = non caché  
-    if (!crowdManager.playerIsHidden)  
-        return false;  
+    void SetOverlayVisibility(bool visible)
+    {
+        Color c = redOverlay.color;
+        c.a = visible ? 0.6f : 0f;
+        redOverlay.color = c;
+    }
 
-    // Followers visibles = non cachés  
-    foreach (var f in crowdManager.activeFollowers)  
-    {  
-        if (f == null || !f.IsHidden)  
-            return false;  
-    }  
+    void CloseScan()
+    {
+        SetOverlayVisibility(false);
+        redOverlay.gameObject.SetActive(false);
+    }
 
-    return true;  
-}  
+    bool IsGroupHidden()
+    {
+        if (!crowdManager.playerIsHidden)
+            return false;
+
+        foreach (var f in crowdManager.activeFollowers)
+        {
+            if (f == null || !f.IsHidden)
+                return false;
+        }
+
+        return true;
+    }
 }
+
 
