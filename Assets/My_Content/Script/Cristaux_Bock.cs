@@ -9,7 +9,7 @@ public class InteractableObject : MonoBehaviour
     {
         if (player && Input.GetMouseButtonDown(0))
         {
-        
+            Destroy(gameObject);
             interactFX.Play();
         }
     }

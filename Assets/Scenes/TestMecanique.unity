@@ -863,7 +863,7 @@ Transform:
   m_GameObject: {fileID: 710473951}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.19, y: -4.1, z: 0}
+  m_LocalPosition: {x: -0.19, y: -3.984, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5860,11 +5860,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3332768667914419621, guid: 6264de4972c2ef84b9c88d70d85d2f97, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.94
+      value: -11.6
       objectReference: {fileID: 0}
     - target: {fileID: 3332768667914419621, guid: 6264de4972c2ef84b9c88d70d85d2f97, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.89
+      value: -2.967
       objectReference: {fileID: 0}
     - target: {fileID: 3332768667914419621, guid: 6264de4972c2ef84b9c88d70d85d2f97, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6374,7 +6374,7 @@ Transform:
   m_GameObject: {fileID: 1966699271}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.76, y: -2.645, z: 0}
+  m_LocalPosition: {x: -8.19, y: -2.645, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6397,7 +6397,7 @@ MonoBehaviour:
   speed: 8
   SmokeFX: {fileID: 1966699279}
   canMove: 1
-  spawnCristal: {fileID: 0}
+  spawnCristal: {fileID: 1362820838}
   rb: {fileID: 1966699273}
   groundCheck: {fileID: 1614839813}
   groundLayer:
@@ -7123,7 +7123,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0.06802368, y: -1.1660304, z: 0.00008976087}
     m_Rotation: {x: 2.6960788, y: 0, z: 0}
-    m_Scale: {x: 0.20391846, y: 0, z: 0.6062984}
+    m_Scale: {x: 0.29401916, y: 0, z: 0.49456686}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
