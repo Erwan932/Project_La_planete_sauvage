@@ -15,8 +15,13 @@ public class InteractableObject : MonoBehaviour
     {
         if (player && Input.GetMouseButtonDown(0))
         {
+     
+            anim.SetTrigger("destroy");
+    
             interactFX.Play();
-            Destroy(gameObject, 2f);  
+
+            Destroy(gameObject, 1f);  
+
         }
     }
 
@@ -38,4 +43,5 @@ public class InteractableObject : MonoBehaviour
         }
     }
 }
+
 
