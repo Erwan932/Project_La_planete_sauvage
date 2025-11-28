@@ -10,7 +10,7 @@ public float flashTime;        // Durée totale du scan
 public Image redOverlay;            // Image UI rouge (alpha = 0)  
 public CrowdManager crowdManager;  
 
-private bool scanInProgress = false;  
+private bool scanInProgress = false;   
 
 void Start()  
 {  
