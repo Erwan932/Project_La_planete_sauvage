@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SpawnCristal : MonoBehaviour
 {
-    public Transform Spawnpoint;
     public GameObject Prefab;
     private bool IsSpawn = false;
     public PlayerMovement player;
