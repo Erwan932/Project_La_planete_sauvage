@@ -66,6 +66,7 @@ public class CrowdManager : MonoBehaviour
             FollowerAI lost = activeFollowers[activeFollowers.Count - 1];
             activeFollowers.RemoveAt(activeFollowers.Count - 1);
             lost.gameObject.SetActive(false);
+            Debug.Log("Membre Perdu");
         }
         else
         {
