@@ -18,7 +18,7 @@ public class SpawnCristal : MonoBehaviour
             player.canMove = false;
         }
     }
-    
+
     public IEnumerator BlinkAndDestroy(GameObject obj, float blinkDuration, float blinkSpeed)
     {
     SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();

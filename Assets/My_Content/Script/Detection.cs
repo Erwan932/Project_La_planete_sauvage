@@ -4,30 +4,20 @@ using UnityEngine.UI;
 
 public class DetectionZone : MonoBehaviour
 {
-    [Header("Scan Settings")]
-    public float interval;
-    public float flashTime;
-    public float startFlashRate = 0.4f;
-    public float endFlashRate = 0.05f;
-    public Image redOverlay;
+    public float interval;           // Temps entre deux scans
+    public float flashTime;          // Durée totale du scan
+    public float startFlashRate = 0.4f; // Intervalle entre flashs au début
+    public float endFlashRate = 0.05f;  // Intervalle juste avant dégâts
+    public Image redOverlay;         // UI rouge
     public CrowdManager crowdManager;
 
-    [Header("Hand Animation")]
-    public Animator handAnimator;
-    public string attackTrigger = "Attack";
-    public string handUpTrigger = "handUp";
-
     private bool scanInProgress = false;
-    private bool elementScanned = false;
-
 
     void Start()
     {
         redOverlay.gameObject.SetActive(false);
         StartCoroutine(DetectionRoutine());
-        Debug.Log("Scan result: " + elementScanned);
     }
-
 
     IEnumerator DetectionRoutine()
     {
@@ -38,7 +28,6 @@ public class DetectionZone : MonoBehaviour
         }
     }
 
-
     IEnumerator ScanSequence()
     {
         scanInProgress = true;
@@ -47,14 +36,18 @@ public class DetectionZone : MonoBehaviour
         float timer = 0f;
         bool overlayOn = false;
 
-        // petit délai avant le scan
+        // Petit délai pour laisser passer les triggers
         yield return new WaitForSeconds(0.05f);
 
         while (timer < flashTime)
         {
+            // Pourcentage du temps écoulé
             float t = timer / flashTime;
+
+            // On interpole la vitesse du flash : de lent à rapide
             float currentFlashRate = Mathf.Lerp(startFlashRate, endFlashRate, t);
 
+            // Inversion état overlay
             overlayOn = !overlayOn;
             SetOverlayVisibility(overlayOn);
 
@@ -62,58 +55,13 @@ public class DetectionZone : MonoBehaviour
             timer += currentFlashRate;
         }
 
+        // Dégâts à la fin
+        if (!IsGroupHidden())
+            crowdManager.TakeDamage();
+
         CloseScan();
-
-        // Détection
-        elementScanned = !IsGroupHidden();
-
-        if (elementScanned)
-            yield return StartCoroutine(PlayHandAnimation());
-        
         scanInProgress = false;
     }
-
-
-    IEnumerator PlayHandAnimation()
-    {
-        // 1. Lancer l’animation Attack
-        handAnimator.SetTrigger(attackTrigger);
-
-        bool animationStarted = false;
-        float timeout = 2f;
-
-        // Attendre l’entrée dans Attack OU timeout
-        while (timeout > 0f)
-        {
-            if (handAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            {
-                animationStarted = true;
-                break;
-            }
-
-            timeout -= Time.deltaTime;
-            yield return null;
-        }
-
-        // Si l’anim a démarré → attendre la fin
-        if (animationStarted)
-        {
-            while (handAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
-                   handAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
-            {
-                yield return null;
-            }
-        }
-
-        // 2. Dégâts 
-        crowdManager.TakeDamage();
-
-        // 3. Animation de remontée
-        handAnimator.SetTrigger(handUpTrigger);
-
-        elementScanned = false;
-    }
-
 
     void SetOverlayVisibility(bool visible)
     {
@@ -130,7 +78,7 @@ public class DetectionZone : MonoBehaviour
 
     bool IsGroupHidden()
     {
-        if (!crowdManager.playerIsHidden) 
+        if (!crowdManager.playerIsHidden)
             return false;
 
         foreach (var f in crowdManager.activeFollowers)
@@ -138,6 +86,9 @@ public class DetectionZone : MonoBehaviour
             if (f == null || !f.IsHidden)
                 return false;
         }
+
         return true;
     }
 }
+
+

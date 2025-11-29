@@ -4,24 +4,13 @@ public class InteractableObject : MonoBehaviour
 {
     private bool player = false;
     public ParticleSystem interactFX;
-    private Animator anim;
-
-    void Start()
-    {
-        anim = GetComponent<Animator>();  
-    }
 
     void Update()
     {
         if (player && Input.GetMouseButtonDown(0))
         {
-     
-            anim.SetTrigger("destroy");
-    
+            Destroy(gameObject);
             interactFX.Play();
-
-            Destroy(gameObject, 1f);  
-
         }
     }
 
@@ -30,7 +19,6 @@ public class InteractableObject : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             player = true;
-            anim.SetBool("isPlayerNear", true); 
         }
     }
 
@@ -39,9 +27,6 @@ public class InteractableObject : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             player = false;
-            anim.SetBool("isPlayerNear", false); 
         }
     }
 }
-
-
