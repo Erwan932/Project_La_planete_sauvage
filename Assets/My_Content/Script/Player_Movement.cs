@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem SmokeFX;
     private bool isGrounded = false;
     public bool canMove = true;
-    public SpawnCristal spawnCristal; 
+    public SpawnCristal spawnCristal;
+    private bool isCrouching = false;
+
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
@@ -41,6 +43,17 @@ public class PlayerMovement : MonoBehaviour
             horizontal = Input.GetAxisRaw("Horizontal");
             UpdateAnimations();
         }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            isCrouching = false;
+        }
+
         Flip();
     }
 
@@ -52,6 +65,12 @@ public class PlayerMovement : MonoBehaviour
             return; 
         }
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+
+        if (isCrouching)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // le joueur ne bouge plus
+            return;
+        }
     }
 
     private bool IsGrounded()
@@ -82,5 +101,6 @@ public class PlayerMovement : MonoBehaviour
         bool isMoving = horizontal != 0;
         animators.SetBool("IsRunning", isMoving);
         animators.SetBool("IsJumping", !isGrounded);
+        animators.SetBool("IsCrouching", isCrouching);
     }
 }

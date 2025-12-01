@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 1e216ecca11be474ba13b9b396abbbfa
+guid: 73525cb701a25e74eab51cdccee7cbcd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5735347742226136294
-    second: Crouch_Anim_Hero1 1_0
+      213: -6038715661589888652
+    second: Fausse_caisse5_0
+  - first:
+      213: -1991326731986724983
+    second: Fausse_caisse5_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 200
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -139,13 +142,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Crouch_Anim_Hero1 1_0
+      name: Fausse_caisse5_0
       rect:
         serializedVersion: 2
-        x: 90
-        y: 11
-        width: 184
-        height: 457
+        x: 151
+        y: 1
+        width: 344
+        height: 325
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +157,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a13c5499d93f760b0800000000000000
-      internalID: -5735347742226136294
+      spriteID: 471c85ba91c223ca0800000000000000
+      internalID: -6038715661589888652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fausse_caisse5_1
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 231
+        width: 33
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 987113443e26d54e0800000000000000
+      internalID: -1991326731986724983
       vertices: []
       indices: 
       edges: []
@@ -174,7 +199,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Crouch_Anim_Hero1 1_0: -5735347742226136294
+      Fausse_caisse5_0: -6038715661589888652
+      Fausse_caisse5_1: -1991326731986724983
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
