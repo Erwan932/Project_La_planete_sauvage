@@ -23,7 +23,6 @@ public class DetectionZone : MonoBehaviour
     void Start()
     {
         redOverlay.gameObject.SetActive(false);
-        StartCoroutine(DetectionRoutine());
     }
 
     IEnumerator DetectionRoutine()
@@ -135,4 +134,29 @@ public class DetectionZone : MonoBehaviour
 
         return true;
     }
+
+    private Coroutine detectionCoroutine;
+
+void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.CompareTag("Player"))
+    {
+        Debug.Log("Player détecté dans le trigger 2D !");
+        detectionCoroutine = StartCoroutine(DetectionRoutine());
+    }
+}
+
+void OnTriggerExit2D(Collider2D other)
+{
+    if (other.CompareTag("Player"))
+    {
+        Debug.Log("Player a quitté le trigger 2D.");
+        
+        if (detectionCoroutine != null)
+            StopCoroutine(detectionCoroutine);
+
+        CloseScan();
+        scanInProgress = false;
+    }
+}
 }

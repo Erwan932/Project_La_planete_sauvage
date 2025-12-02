@@ -6316,7 +6316,7 @@ MonoBehaviour:
   speed: 8
   SmokeFX: {fileID: 1279637156}
   canMove: 1
-  spawnCristal: {fileID: 0}
+  spawnCristal: {fileID: 1386800222}
   rb: {fileID: 1279637158}
   groundCheck: {fileID: 2112659350}
   groundLayer:
