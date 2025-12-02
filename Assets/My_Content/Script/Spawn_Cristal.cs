@@ -12,8 +12,8 @@ public class SpawnCristal : MonoBehaviour
     {
         if (!IsSpawn && collision.CompareTag("Player"))
         {
-           Vector3 spawnPos = collision.transform.position;
-            spawnPos.y -= 1.25f;
+            Vector3 spawnPos = collision.transform.position;
+            spawnPos.y -= 1.35f;
             Spawnobject = Instantiate(Prefab, spawnPos, Quaternion.identity);
             player.canMove = false;
         }
@@ -21,22 +21,22 @@ public class SpawnCristal : MonoBehaviour
 
     public IEnumerator BlinkAndDestroy(GameObject obj, float blinkDuration, float blinkSpeed)
     {
-    SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-    if (sr == null)
-    {
-        yield break;
-    }
-    float timer = 0f;
+        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            yield break;
+        }
+        float timer = 0f;
 
-    while (timer < blinkDuration)
-    { 
-        sr.enabled = !sr.enabled;
-        timer += blinkSpeed;
-        yield return new WaitForSeconds(blinkSpeed);
-    }
-    sr.enabled = true;  
-    Destroy(obj);
-    Destroy(gameObject); 
-    player.canMove = true;  
+        while (timer < blinkDuration)
+        {
+            sr.enabled = !sr.enabled;
+            timer += blinkSpeed;
+            yield return new WaitForSeconds(blinkSpeed);
+        }
+        sr.enabled = true;
+        Destroy(obj);
+        Destroy(gameObject);
+        player.canMove = true;
     }
 }
