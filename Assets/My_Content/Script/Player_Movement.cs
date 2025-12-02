@@ -17,7 +17,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Animator animators;
 
-
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");

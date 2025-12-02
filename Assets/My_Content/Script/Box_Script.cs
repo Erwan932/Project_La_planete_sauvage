@@ -5,6 +5,11 @@ public class Box_Script : MonoBehaviour
     private Animator anim;
     private bool playerIsInside = false;
 
+    [Header("Gestion des alliés")]
+    public CrowdManager crowdManager; 
+
+    private bool allyLost = false; 
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -12,13 +17,19 @@ public class Box_Script : MonoBehaviour
 
     void Update()
     {
-        // Vérifie si on est dans l'animation Anim_Box
         AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
 
-        // Quand Anim_Box est finie → passer à Anim_Box_Kill
-        if (state.IsName("Anim_Box") && state.normalizedTime >= 1f)
+        
+        if (playerIsInside && state.IsName("Anim_Box") && state.normalizedTime >= 1f)
         {
             anim.SetTrigger("IsStayInTrigger");
+
+            
+            if (!allyLost && crowdManager != null)
+            {
+                crowdManager.TakeDamage(); 
+                allyLost = true;
+            }
         }
     }
 
@@ -28,6 +39,7 @@ public class Box_Script : MonoBehaviour
         {
             playerIsInside = true;
             anim.SetBool("IsTrigger", true);
+            allyLost = false; // Reset si le joueur rentre à nouveau
         }
     }
 
@@ -37,7 +49,7 @@ public class Box_Script : MonoBehaviour
         {
             playerIsInside = false;
             anim.SetBool("IsTrigger", false);
+            anim.ResetTrigger("IsStayInTrigger");
         }
     }
 }
-
