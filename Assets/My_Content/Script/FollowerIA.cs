@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class FollowerAI : MonoBehaviour
 {
-    private Vector2 targetPosition;
+    public Vector2 targetPosition;
     public float followSpeed = 2f;
-    private bool inFormation = false;
+    public bool inFormation = false;
     public bool IsHidden = false;
     public GameObject tooltip;
 

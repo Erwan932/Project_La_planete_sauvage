@@ -1,57 +1,60 @@
 using UnityEngine;
 
-public class FollowerMovement : MonoBehaviour
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(FollowerAI))]
+public class FollowerMovementSync : MonoBehaviour
 {
-    private float horizontal;
-    private float speed = 0f;
-    private float jumpingPower = 16f;
+    public Transform player; // le joueur à suivre
+    public float speed = 2f;
+
+    private Animator animator;
     private bool isFacingRight = true;
-    private ParticleSystem SmokeFX;
-    private bool isGrounded = false;
-    private bool canMove = true;
-    private SpawnCristal spawnCristal; 
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Animator animators;
+    private FollowerAI ai;
 
-
-    void Update()
+    private void Awake()
     {
+        animator = GetComponent<Animator>();
+        ai = GetComponent<FollowerAI>();
+    }
+
+    private void Update()
+    {
+        if (ai != null && ai.inFormation)
         {
-            horizontal = Input.GetAxisRaw("Horizontal");
-            UpdateAnimations();
+            // Suivre la position de formation
+            transform.position = Vector2.MoveTowards(transform.position, ai.targetPosition, speed * Time.deltaTime);
+
+            // Copier directement les animations du joueur
+            PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+            if (playerMovement != null)
+            {
+                animator.SetBool("IsRunning", Mathf.Abs(playerMovement.GetComponent<Rigidbody2D>().linearVelocity.x) > 0.01f);
+                animator.SetBool("IsJumping", !playerMovement.isGrounded);
+                animator.SetBool("IsCrouching", playerMovement.isCrouching);
+            }
+
+            // Copier le flip en temps réel
+            CopyFlip();
         }
-        Flip();
-    }
-
-    private bool IsGrounded()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    }
-
-    private void Flip()
-    {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        else
         {
-            isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            isGrounded = true;
+            // Idle si pas dans la formation
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsCrouching", false);
         }
     }
-    private void UpdateAnimations()
+
+    private void CopyFlip()
     {
-        bool isMoving = horizontal != 0;
-        animators.SetBool("IsRunning", isMoving);
-        animators.SetBool("IsJumping", !isGrounded);
+        bool playerFacingRight = player.localScale.x > 0;
+        if (playerFacingRight != isFacingRight)
+        {
+            isFacingRight = playerFacingRight;
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1 : -1);
+            transform.localScale = scale;
+        }
     }
 }
+
