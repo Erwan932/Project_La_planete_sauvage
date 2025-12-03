@@ -72,11 +72,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    }
-
     private void Flip()
     {
         if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
