@@ -5,11 +5,9 @@ using UnityEngine.UI;
 public class DetectionZone : MonoBehaviour
 {
     [Header("Scan Settings")]
-    public float interval;
-    public float flashTime;
-    public float startFlashRate = 0.4f;
-    public float endFlashRate = 0.05f;
+    public float interval = 1f;
     public Image redOverlay;
+    public float overlayFadeDuration = 0.5f;
     public CrowdManager crowdManager;
 
     [Header("Hand Animation")]
@@ -17,146 +15,135 @@ public class DetectionZone : MonoBehaviour
     public string attackTrigger = "Attack";
     public string handUpTrigger = "handUp";
 
+    [Header("Eyes Animation")]
+    public Animator eyesAnimator;
+    public string eyesIdleTrigger = "Idle";
+    public string eyesSpotTrigger = "Spot";
+    public string eyesDeclineTrigger = "Decline";
+
     private bool scanInProgress = false;
-    private bool elementScanned = false;
+    private Coroutine detectionCoroutine;
 
     void Start()
     {
         redOverlay.gameObject.SetActive(false);
     }
 
-    IEnumerator DetectionRoutine()
+IEnumerator DetectionRoutine()
+{
+    while (true)
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(interval);
+        yield return new WaitForSeconds(interval);
+
+        // Ne lancer la séquence que si aucune séquence n'est en cours
+        if (!scanInProgress)
             yield return StartCoroutine(ScanSequence());
-        }
     }
+}
 
-    IEnumerator ScanSequence()
-    {
-        scanInProgress = true;
-        redOverlay.gameObject.SetActive(true);
+IEnumerator ScanSequence()
+{
+    scanInProgress = true;
 
-        float timer = 0f;
-        bool overlayOn = false;
+    // 1. Idle de Eyes
+    eyesAnimator.SetTrigger(eyesIdleTrigger);
+    yield return new WaitForSeconds(0.1f);
 
-        // petit délai avant le scan
-        yield return new WaitForSeconds(0.05f);
+    // 2. Spot de Eyes
+    eyesAnimator.SetTrigger(eyesSpotTrigger);
+    yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Spot"));
 
-        while (timer < flashTime)
-        {
-            float t = timer / flashTime;
-            float currentFlashRate = Mathf.Lerp(startFlashRate, endFlashRate, t);
+    // 3. Overlay apparaît et disparaît
+    yield return StartCoroutine(FadeOverlay(true, overlayFadeDuration));
+    yield return StartCoroutine(FadeOverlay(false, overlayFadeDuration));
 
-            overlayOn = !overlayOn;
-            SetOverlayVisibility(overlayOn);
+    // 4. Hand Attack
+    handAnimator.SetTrigger(attackTrigger);
+    yield return StartCoroutine(WaitForAnimation(handAnimator, "Attack"));
 
-            yield return new WaitForSeconds(currentFlashRate);
-            timer += currentFlashRate;
-        }
+    // 5. Dégâts
+    crowdManager.TakeDamage();
 
-        CloseScan();
+    // 6. HandUp
+    handAnimator.SetTrigger(handUpTrigger);
+    yield return StartCoroutine(WaitForAnimation(handAnimator, "handUp"));
 
-        // Détection
-        elementScanned = !IsGroupHidden();
+    // 7. Decline de Eyes
+    eyesAnimator.SetTrigger(eyesDeclineTrigger);
+    yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Decline"));
 
-        if (elementScanned)
-            yield return StartCoroutine(PlayHandAnimation());
+    // 8. Retour à Idle de Eyes
+    eyesAnimator.SetTrigger(eyesIdleTrigger);
 
-        scanInProgress = false;
-    }
+    // Maintenant la boucle peut relancer Spot correctement
+    scanInProgress = false;
+}
+
 
     IEnumerator PlayHandAnimation()
     {
-        // 1. Lancer l’animation Attack
+        // Attack
         handAnimator.SetTrigger(attackTrigger);
+        yield return StartCoroutine(WaitForAnimation(handAnimator, "Attack"));
 
-        bool animationStarted = false;
-        float timeout = 2f;
+        // Dégâts
+        crowdManager.TakeDamage();
 
-        // Attendre l’entrée dans Attack OU timeout
-        while (timeout > 0f)
+        // HandUp
+        handAnimator.SetTrigger(handUpTrigger);
+        yield return StartCoroutine(WaitForAnimation(handAnimator, "handUp"));
+    }
+
+    // Nouvelle fonction utilitaire pour attendre la fin d'une animation
+    IEnumerator WaitForAnimation(Animator animator, string stateName)
+    {
+        // Attendre que l'animator entre dans l'état
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(stateName));
+
+        // Attendre que l'animation soit terminée
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+    }
+
+    IEnumerator FadeOverlay(bool show, float duration)
+    {
+        redOverlay.gameObject.SetActive(true);
+        float startAlpha = redOverlay.color.a;
+        float endAlpha = show ? 0.6f : 0f;
+        float t = 0f;
+
+        while (t < duration)
         {
-            if (handAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            {
-                animationStarted = true;
-                break;
-            }
-
-            timeout -= Time.deltaTime;
+            t += Time.deltaTime;
+            float alpha = Mathf.Lerp(startAlpha, endAlpha, t / duration);
+            Color c = redOverlay.color;
+            c.a = alpha;
+            redOverlay.color = c;
             yield return null;
         }
 
-        // Si l’anim a démarré → attendre la fin
-        if (animationStarted)
+        Color finalColor = redOverlay.color;
+        finalColor.a = endAlpha;
+        redOverlay.color = finalColor;
+
+        if (!show)
+            redOverlay.gameObject.SetActive(false);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && !scanInProgress)
+            detectionCoroutine = StartCoroutine(DetectionRoutine());
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
         {
-            while (handAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack") &&
-                   handAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
-            {
-                yield return null;
-            }
+            if (detectionCoroutine != null)
+                StopCoroutine(detectionCoroutine);
+
+            redOverlay.gameObject.SetActive(false);
+            scanInProgress = false;
         }
-
-        // 2. Dégâts 
-        crowdManager.TakeDamage();
-
-        // 3. Animation de remontée
-        handAnimator.SetTrigger(handUpTrigger);
-
-        elementScanned = false;
     }
-
-    void SetOverlayVisibility(bool visible)
-    {
-        Color c = redOverlay.color;
-        c.a = visible ? 0.6f : 0f;
-        redOverlay.color = c;
-    }
-
-    void CloseScan()
-    {
-        SetOverlayVisibility(false);
-        redOverlay.gameObject.SetActive(false);
-    }
-
-    bool IsGroupHidden()
-    {
-        if (!crowdManager.playerIsHidden)
-            return false;
-
-        foreach (var f in crowdManager.activeFollowers)
-        {
-            if (f == null || !f.IsHidden)
-                return false;
-        }
-
-        return true;
-    }
-
-    private Coroutine detectionCoroutine;
-
-void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.CompareTag("Player"))
-    {
-        Debug.Log("Player détecté dans le trigger 2D !");
-        detectionCoroutine = StartCoroutine(DetectionRoutine());
-    }
-}
-
-void OnTriggerExit2D(Collider2D other)
-{
-    if (other.CompareTag("Player"))
-    {
-        Debug.Log("Player a quitté le trigger 2D.");
-        
-        if (detectionCoroutine != null)
-            StopCoroutine(detectionCoroutine);
-
-        CloseScan();
-        scanInProgress = false;
-    }
-}
 }
