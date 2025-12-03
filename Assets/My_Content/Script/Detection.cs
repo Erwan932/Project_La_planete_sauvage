@@ -35,8 +35,8 @@ IEnumerator DetectionRoutine()
     {
         yield return new WaitForSeconds(interval);
 
-        // Ne lancer la séquence que si aucune séquence n'est en cours
-        if (!scanInProgress)
+        // Si le joueur est caché, ne rien faire et continuer à Idle
+        if (!scanInProgress && !crowdManager.playerIsHidden)
             yield return StartCoroutine(ScanSequence());
     }
 }
@@ -53,31 +53,32 @@ IEnumerator ScanSequence()
     eyesAnimator.SetTrigger(eyesSpotTrigger);
     yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Spot"));
 
-    // 3. Overlay apparaît et disparaît
+    // 3. Overlay apparaît puis disparaît
     yield return StartCoroutine(FadeOverlay(true, overlayFadeDuration));
     yield return StartCoroutine(FadeOverlay(false, overlayFadeDuration));
 
-    // 4. Hand Attack
-    handAnimator.SetTrigger(attackTrigger);
-    yield return StartCoroutine(WaitForAnimation(handAnimator, "Attack"));
+    // 4. Hand Attack + HandUp seulement si le joueur n’est pas caché
+    if (!crowdManager.playerIsHidden)
+    {
+        handAnimator.SetTrigger(attackTrigger);
+        yield return StartCoroutine(WaitForAnimation(handAnimator, "Attack"));
 
-    // 5. Dégâts
-    crowdManager.TakeDamage();
+        crowdManager.TakeDamage();
 
-    // 6. HandUp
-    handAnimator.SetTrigger(handUpTrigger);
-    yield return StartCoroutine(WaitForAnimation(handAnimator, "handUp"));
+        handAnimator.SetTrigger(handUpTrigger);
+        yield return StartCoroutine(WaitForAnimation(handAnimator, "handUp"));
+    }
 
-    // 7. Decline de Eyes
+    // 5. Decline de Eyes
     eyesAnimator.SetTrigger(eyesDeclineTrigger);
     yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Decline"));
 
-    // 8. Retour à Idle de Eyes
+    // 6. Retour à Idle de Eyes
     eyesAnimator.SetTrigger(eyesIdleTrigger);
 
-    // Maintenant la boucle peut relancer Spot correctement
     scanInProgress = false;
 }
+
 
 
     IEnumerator PlayHandAnimation()
