@@ -7,10 +7,10 @@ public class PlayerMovement : MonoBehaviour
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
     public ParticleSystem SmokeFX;
-    private bool isGrounded = false;
+    public bool isGrounded = false;
     public bool canMove = true;
     public SpawnCristal spawnCristal;
-    private bool isCrouching = false;
+    public bool isCrouching = false;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;

@@ -33,30 +33,34 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
     }
 
-    public void TryRecruitNearbyFollower()
+public void TryRecruitNearbyFollower()
+{
+    if (nearbyFollower == null)
     {
-        if (nearbyFollower == null)
+        Debug.Log("Aucun follower à proximité");
+        return;
+    }
+
+    if (recruitableFollowers.Contains(nearbyFollower))
+    {
+        nearbyFollower.tooltip.SetActive(false);
+        Debug.Log("Follower recruté !");
+
+        // Ignorer collision avec le joueur
+        Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), GetComponent<Collider2D>(), true);
+
+        // Ignorer collision entre ce follower et tous les followers actifs
+        foreach (FollowerAI follower in activeFollowers)
         {
-            Debug.Log("Aucun follower à proximité");
-            return;
+            Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), follower.GetComponent<Collider2D>(), true);
         }
 
-        if (recruitableFollowers.Contains(nearbyFollower))
-        {
-            nearbyFollower.tooltip.SetActive(false);
-            Debug.Log("Follower recruté !");
-            Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), GetComponent<Collider2D>(), true);
-            foreach (FollowerAI follower in activeFollowers)
-            {
-                Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), nearbyFollower.GetComponent<Collider2D>(), true);
-            }
-            recruitableFollowers.Remove(nearbyFollower);
-            nearbyFollower.gameObject.SetActive(true);
-            activeFollowers.Add(nearbyFollower);
-            nearbyFollower = null;
-            
-        }
+        recruitableFollowers.Remove(nearbyFollower);
+        nearbyFollower.gameObject.SetActive(true);
+        activeFollowers.Add(nearbyFollower);
+        nearbyFollower = null;
     }
+}
 
 
     public void TakeDamage()
