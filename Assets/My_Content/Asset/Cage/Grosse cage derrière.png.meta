@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 14142fc692e188f499fc7d1dee89b3af
+guid: 99816e7b261747c4088227c47afde49f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7867795394574538324
-    second: Drag_Fond9_0
-  - first:
-      213: -1079118994479737441
-    second: Drag_Fond9_1
+      213: -7396672339648109422
+    second: "Grosse cage derri\xE8re_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -116,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Drag_Fond9_0
+      name: "Grosse cage derri\xE8re_0"
       rect:
         serializedVersion: 2
-        x: 654
-        y: 633
-        width: 190
-        height: 200
+        x: 0
+        y: 0
+        width: 102
+        height: 228
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,30 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 456d11bd936003d60800000000000000
-      internalID: 7867795394574538324
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Drag_Fond9_1
-      rect:
-        serializedVersion: 2
-        x: 1097
-        y: 633
-        width: 187
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f9598afedf23601f0800000000000000
-      internalID: -1079118994479737441
+      spriteID: 294215342bdb95990800000000000000
+      internalID: -7396672339648109422
       vertices: []
       indices: 
       edges: []
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Drag_Fond9_0: 7867795394574538324
-      Drag_Fond9_1: -1079118994479737441
+      "Grosse cage derri\xE8re_0": -7396672339648109422
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

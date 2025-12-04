@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -38,5 +39,10 @@ public class SpawnCristal : MonoBehaviour
         Destroy(obj);
         Destroy(gameObject);
         player.canMove = true;
+    }
+
+    internal static object BlinkAndDestroy(object spawnobject, float v1, float v2)
+    {
+        throw new NotImplementedException();
     }
 }

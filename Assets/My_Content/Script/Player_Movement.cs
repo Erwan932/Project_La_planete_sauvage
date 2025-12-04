@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!canMove && Input.GetMouseButtonDown(0))
         {
-            StartCoroutine(spawnCristal.BlinkAndDestroy (spawnCristal.Spawnobject, 0.5f, 0.1f));
+            StartCoroutine(spawnCristal.BlinkAndDestroy(spawnCristal.Spawnobject, 0.5f, 0.1f));
         }
 
         {
@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
         if (!canMove)
         {
             rb.linearVelocity = Vector2.zero;
-            return; 
+            return;
         }
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
 
