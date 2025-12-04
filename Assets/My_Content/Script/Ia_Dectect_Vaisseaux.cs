@@ -15,7 +15,7 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void Start()
     {
-        // Récupère le SpriteRenderer du Triangle
+        
         triangleSR = GetComponent<SpriteRenderer>();
         if (triangleSR != null)
         {
@@ -39,7 +39,7 @@ public class KillPlayerWithBlink : MonoBehaviour
             playerInside = false;
             timer = 0f;
 
-            // Arrête le clignotement → couleur normale
+            
             if (triangleSR != null)
                 triangleSR.color = originalColor;
         }
@@ -51,7 +51,7 @@ public class KillPlayerWithBlink : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            // Clignotement du Triangle
+            
             if (triangleSR != null)
             {
                 float t = Mathf.Abs(Mathf.Sin(Time.time * blinkSpeed));
@@ -68,6 +68,7 @@ public class KillPlayerWithBlink : MonoBehaviour
     void KillPlayer()
     {
         Debug.Log("Le joueur est mort dans la zone !");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("Menu_Mort"); // Charge la scène de mort
     }
+
 }

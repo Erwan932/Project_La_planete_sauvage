@@ -41,9 +41,13 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/Scenes/Menu_Principal.unity
-  - m_enabled: 1
     m_path: Assets/Scenes/TestMecanique.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Map_TestV2.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/MENU_Interface/Menu_Mort.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/MENU_Interface/Menu_Principal.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings: []

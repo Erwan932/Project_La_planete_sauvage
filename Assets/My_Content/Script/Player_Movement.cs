@@ -6,10 +6,13 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 0f;
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
+
     public ParticleSystem SmokeFX;
     public bool isGrounded = false;
     public bool canMove = true;
-    public SpawnCristal spawnCristal;
+
+    [HideInInspector] public SpawnCristal currentCristal; 
+
     public bool isCrouching = false;
 
     [SerializeField] private Rigidbody2D rb;
@@ -21,7 +24,8 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        
+        if (Input.GetButtonDown("Jump") && isGrounded && canMove)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
             SmokeFX.Play();
@@ -33,26 +37,17 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
         }
 
-        if (!canMove && Input.GetMouseButtonDown(0))
+        
+        if (!canMove && Input.GetMouseButtonDown(0) && currentCristal != null && currentCristal.Spawnobject != null)
         {
-            StartCoroutine(spawnCristal.BlinkAndDestroy(spawnCristal.Spawnobject, 0.5f, 0.1f));
+            StartCoroutine(currentCristal.BlinkAndDestroy(currentCristal.Spawnobject, 0.5f, 0.1f));
         }
 
-        {
-            horizontal = Input.GetAxisRaw("Horizontal");
-            UpdateAnimations();
-        }
+        
+        if (Input.GetKeyDown(KeyCode.C)) isCrouching = true;
+        if (Input.GetKeyUp(KeyCode.C)) isCrouching = false;
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            isCrouching = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.C))
-        {
-            isCrouching = false;
-        }
-
+        UpdateAnimations();
         Flip();
     }
 
@@ -63,20 +58,22 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             return;
         }
-        rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
 
         if (isCrouching)
         {
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // le joueur ne bouge plus
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             return;
         }
+
+        rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
     }
 
     private void Flip()
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
+
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
@@ -90,10 +87,10 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = true;
         }
     }
+
     private void UpdateAnimations()
     {
-        bool isMoving = horizontal != 0;
-        animators.SetBool("IsRunning", isMoving);
+        animators.SetBool("IsRunning", horizontal != 0);
         animators.SetBool("IsJumping", !isGrounded);
         animators.SetBool("IsCrouching", isCrouching);
     }
