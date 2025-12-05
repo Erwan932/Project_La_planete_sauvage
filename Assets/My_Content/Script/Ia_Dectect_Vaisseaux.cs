@@ -9,13 +9,15 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     private float timer = 0f;
     private bool playerInside = false;
-
+    private bool playerVisible = false;
+    private GameObject player;
+    private float colliderbound;
     private SpriteRenderer triangleSR;
     private Color originalColor;
 
     void Start()
     {
-        
+        colliderbound = gameObject.GetComponent<Collider2D>().bounds.max.y;
         triangleSR = GetComponent<SpriteRenderer>();
         if (triangleSR != null)
         {
@@ -29,6 +31,7 @@ public class KillPlayerWithBlink : MonoBehaviour
         {
             playerInside = true;
             timer = 0f;
+            player = other.gameObject;
         }
     }
 
@@ -38,17 +41,42 @@ public class KillPlayerWithBlink : MonoBehaviour
         {
             playerInside = false;
             timer = 0f;
+            player = null;
 
-            
+
             if (triangleSR != null)
                 triangleSR.color = originalColor;
         }
+    }
+
+    void OnDrawGizmos()
+    {
+        var vec = new Vector3(transform.position.x, colliderbound);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(vec, player.transform.position);
     }
 
     void Update()
     {
         if (playerInside)
         {
+            var vec = new Vector3(transform.position.x, colliderbound-0.1f);
+            RaycastHit2D hit= Physics2D.Raycast(vec, player.transform.position - vec, 100f);
+            if (hit.collider != null && hit.collider.CompareTag(playerTag))
+            {
+                playerVisible = true;
+            }
+            else
+            {
+                playerVisible = false;
+            }
+            if (!playerVisible)
+            {
+                
+                if (triangleSR != null)
+                    triangleSR.color = originalColor;
+                return;
+            }
             timer += Time.deltaTime;
 
             

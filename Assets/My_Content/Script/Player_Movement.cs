@@ -4,7 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private float horizontal;
     public float speed = 0f;
-    private float jumpingPower = 16f;
+    public float jumpingPower = 0f;
     private bool isFacingRight = true;
 
     public ParticleSystem SmokeFX;
