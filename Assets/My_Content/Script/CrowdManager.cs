@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CrowdManager : MonoBehaviour
 {
-    public List<FollowerAI> recruitableFollowers;    // Followers à recruter
-    public List<FollowerAI> activeFollowers = new List<FollowerAI>();  // Followers actifs
-    public float followDistance = 0.5f;   // Distance minimale entre les followers
-    public FollowerAI nearbyFollower; // Follower à portée pour recruter
+    public List<FollowerAI> recruitableFollowers; 
+    public List<FollowerAI> activeFollowers = new List<FollowerAI>();  
+    public float followDistance = 0.5f;   
+    public FollowerAI nearbyFollower; 
     public bool playerIsHidden = false;
 
     public void SetHidden(bool state)
@@ -45,16 +45,6 @@ public void TryRecruitNearbyFollower()
     {
         nearbyFollower.tooltip.SetActive(false);
         Debug.Log("Follower recruté !");
-
-        // Ignorer collision avec le joueur
-        Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), GetComponent<Collider2D>(), true);
-
-        // Ignorer collision entre ce follower et tous les followers actifs
-        foreach (FollowerAI follower in activeFollowers)
-        {
-            Physics2D.IgnoreCollision(nearbyFollower.GetComponent<Collider2D>(), follower.GetComponent<Collider2D>(), true);
-        }
-
         recruitableFollowers.Remove(nearbyFollower);
         nearbyFollower.gameObject.SetActive(true);
         activeFollowers.Add(nearbyFollower);
