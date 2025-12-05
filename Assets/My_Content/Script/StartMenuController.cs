@@ -6,7 +6,7 @@ public class StartMenuController : MonoBehaviour
     public void OnStartClick()     
     
     {
-       SceneManager.LoadScene("TestMecanique");
+       SceneManager.LoadScene("Map_TestV2");
     }
 
     public void OnQuitClick()
