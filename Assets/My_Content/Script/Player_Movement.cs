@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isGrounded = false;
     public bool canMove = true;
 
-    [HideInInspector] public SpawnCristal currentCristal; 
+    [HideInInspector] public SpawnCristal currentCristal;
 
     public bool isCrouching = false;
 
@@ -22,9 +22,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
+        // ⛔ Bloquer Q/D quand le joueur ne peut pas bouger
+        if (canMove)
+            horizontal = Input.GetAxisRaw("Horizontal");
+        else
+            horizontal = 0f;
 
-        
+        // ⛔ Saut bloqué si canMove = false
         if (Input.GetButtonDown("Jump") && isGrounded && canMove)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
@@ -37,28 +41,40 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
         }
 
-        
+        // Action spéciale → autorisée même si canMove = false
         if (!canMove && Input.GetMouseButtonDown(0) && currentCristal != null && currentCristal.Spawnobject != null)
         {
             StartCoroutine(currentCristal.BlinkAndDestroy(currentCristal.Spawnobject, 0.5f, 0.1f));
         }
 
-        
-        if (Input.GetKeyDown(KeyCode.C)) isCrouching = true;
-        if (Input.GetKeyUp(KeyCode.C)) isCrouching = false;
+        // ⛔ Bloquer crouch C si canMove = false
+        if (canMove)
+        {
+            if (Input.GetKeyDown(KeyCode.C)) isCrouching = true;
+            if (Input.GetKeyUp(KeyCode.C)) isCrouching = false;
+        }
+        else
+        {
+            isCrouching = false; // sécurité
+        }
 
         UpdateAnimations();
-        Flip();
+
+        // ⛔ Bloquer Flip si canMove = false
+        if (canMove)
+            Flip();
     }
 
     private void FixedUpdate()
     {
+        // ⛔ Bloquer complètement le mouvement
         if (!canMove)
         {
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
+        // Crouch → bloque le déplacement horizontal
         if (isCrouching)
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
