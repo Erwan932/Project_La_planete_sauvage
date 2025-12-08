@@ -39,7 +39,7 @@ public class Box_Script : MonoBehaviour
         {
             playerIsInside = true;
             anim.SetBool("IsTrigger", true);
-            allyLost = false; // Reset si le joueur rentre à nouveau
+            allyLost = false; 
         }
     }
 

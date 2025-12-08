@@ -6342,10 +6342,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   speed: 8
+  jumpingPower: 6
   SmokeFX: {fileID: 1279637156}
   isGrounded: 0
   canMove: 1
-  spawnCristal: {fileID: 1386800222}
+  currentCristal: {fileID: 0}
   isCrouching: 0
   rb: {fileID: 1279637158}
   groundCheck: {fileID: 2112659350}

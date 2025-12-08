@@ -106,3 +106,4 @@ public class KillPlayerWithBlink : MonoBehaviour
         SceneManager.LoadScene("Menu_Mort");
     }
 }
+
