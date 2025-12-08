@@ -4,8 +4,8 @@ using TMPro;
 
 public class DialogueTyper : MonoBehaviour
 {
-    public TextMeshProUGUI dialogueText;   // Texte TMP
-    public SpriteRenderer[] backgrounds;   // Plusieurs BACKGROUNDS (SpriteRenderer)
+    public TextMeshProUGUI dialogueText;   
+    public SpriteRenderer[] backgrounds;   
     public float typingSpeed = 0.03f;
     public float delayBetweenLines = 2f;
 
@@ -13,25 +13,53 @@ public class DialogueTyper : MonoBehaviour
     public string[] lines;
 
     private int index = 0;
+    private Coroutine dialogueCoroutine;
+    private bool playerInside = false;
 
     void Start()
     {
-        if (dialogueText != null)
-            dialogueText.text = "";
-
-        StartCoroutine(PlayDialogue());
+        HideAll();
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && !playerInside)
+        {
+            playerInside = true;
+            ShowAll();
+
+            index = 0;
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            dialogueCoroutine = StartCoroutine(PlayDialogue());
+        }
+    }
+
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInside = false;
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            HideAll();
+        }
+    }
+
 
     IEnumerator PlayDialogue()
     {
-        while (index < lines.Length)
+        while (index < lines.Length && playerInside)
         {
             yield return StartCoroutine(TypeLine(lines[index]));
             yield return new WaitForSeconds(delayBetweenLines);
             index++;
         }
-
-        StartCoroutine(FadeOut());
     }
 
     IEnumerator TypeLine(string line)
@@ -40,43 +68,33 @@ public class DialogueTyper : MonoBehaviour
 
         foreach (char letter in line)
         {
+            if (!playerInside) yield break; 
             dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed);
         }
     }
 
-    IEnumerator FadeOut()
+    void ShowAll()
     {
-        float t = 1f;
+        dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 1f);
 
-        Color textColor = dialogueText.color;
-        Color[] bgColors = new Color[backgrounds.Length];
-
-        // On sauvegarde les couleurs de chaque background
-        for (int i = 0; i < backgrounds.Length; i++)
+        foreach (var bg in backgrounds)
         {
-            bgColors[i] = backgrounds[i].color;
+            Color c = bg.color;
+            bg.color = new Color(c.r, c.g, c.b, 1f);
         }
+    }
 
-        while (t > 0)
+    void HideAll()
+    {
+        dialogueText.text = "";
+
+        dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 0f);
+
+        foreach (var bg in backgrounds)
         {
-            t -= Time.deltaTime;
-
-            // fade texte
-            dialogueText.color = new Color(textColor.r, textColor.g, textColor.b, t);
-
-            // fade de tous les backgrounds
-            for (int i = 0; i < backgrounds.Length; i++)
-            {
-                SpriteRenderer bg = backgrounds[i];
-                Color original = bgColors[i];
-                bg.color = new Color(original.r, original.g, original.b, t);
-            }
-
-            yield return null;
+            Color c = bg.color;
+            bg.color = new Color(c.r, c.g, c.b, 0f);
         }
-
-        gameObject.SetActive(false);
     }
 }
-
