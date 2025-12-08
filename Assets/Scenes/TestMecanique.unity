@@ -1599,12 +1599,13 @@ MonoBehaviour:
   lines:
   - OU je suis
   - Ou je dois allez
+  - Comment suis-je arriver la ?
   textspeed: 0.2
   player: {fileID: 1966699277}
   panel: {fileID: 1019497910}
   slideDistance: 1000
   slideSpeed: 4
-  nextTextSound: {fileID: 8300000, guid: 59649efd324696e40ae9ded0ed46a85c, type: 3}
+  nextTextSound: {fileID: 0}
 --- !u!114 &1019497912
 MonoBehaviour:
   m_ObjectHideFlags: 0

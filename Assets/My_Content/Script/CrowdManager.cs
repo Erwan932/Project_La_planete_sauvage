@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;   // ← IMPORTANT pour charger une scène
 
 public class CrowdManager : MonoBehaviour
 {
-    public List<FollowerAI> recruitableFollowers; 
-    public List<FollowerAI> activeFollowers = new List<FollowerAI>();  
-    public float followDistance = 0.5f;   
-    public FollowerAI nearbyFollower; 
+    public List<FollowerAI> recruitableFollowers;
+    public List<FollowerAI> activeFollowers = new List<FollowerAI>();
+    public float followDistance = 0.5f;
+    public FollowerAI nearbyFollower;
     public bool playerIsHidden = false;
 
     public void SetHidden(bool state)
-    {   
+    {
         playerIsHidden = state;
     }
 
@@ -33,25 +33,24 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
     }
 
-public void TryRecruitNearbyFollower()
-{
-    if (nearbyFollower == null)
+    public void TryRecruitNearbyFollower()
     {
-        Debug.Log("Aucun follower à proximité");
-        return;
-    }
+        if (nearbyFollower == null)
+        {
+            Debug.Log("Aucun follower à proximité");
+            return;
+        }
 
-    if (recruitableFollowers.Contains(nearbyFollower))
-    {
-        nearbyFollower.tooltip.SetActive(false);
-        Debug.Log("Follower recruté !");
-        recruitableFollowers.Remove(nearbyFollower);
-        nearbyFollower.gameObject.SetActive(true);
-        activeFollowers.Add(nearbyFollower);
-        nearbyFollower = null;
+        if (recruitableFollowers.Contains(nearbyFollower))
+        {
+            nearbyFollower.tooltip.SetActive(false);
+            Debug.Log("Follower recruté !");
+            recruitableFollowers.Remove(nearbyFollower);
+            nearbyFollower.gameObject.SetActive(true);
+            activeFollowers.Add(nearbyFollower);
+            nearbyFollower = null;
+        }
     }
-}
-
 
     public void TakeDamage()
     {
@@ -64,6 +63,7 @@ public void TryRecruitNearbyFollower()
         else
         {
             Debug.Log("GAME OVER");
+            SceneManager.LoadScene("Menu_Mort"); // ← Chargement de la scène Game Over
         }
     }
 
