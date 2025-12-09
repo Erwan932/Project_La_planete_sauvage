@@ -841,8 +841,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0033874512, y: 0.13296509}
-  m_SizeDelta: {x: 3.4724007, y: 0.4836998}
+  m_AnchoredPosition: {x: 0.0247, y: 0.18741}
+  m_SizeDelta: {x: 3.5286, y: 0.37482}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &310033806
 CanvasRenderer:
@@ -2566,6 +2566,7 @@ MonoBehaviour:
   lines:
   - J'ai besion d'aide!
   - Sauve moi stp
+  extraLine: Merci je t'aime
 --- !u!61 &1587011702
 BoxCollider2D:
   m_ObjectHideFlags: 0

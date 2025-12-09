@@ -12,13 +12,31 @@ public class DialogueTyper : MonoBehaviour
     [TextArea(3, 10)]
     public string[] lines;
 
+    [TextArea]
+    public string extraLine; // ➤ TEXTE affiché quand on appuie sur B
+
     private int index = 0;
     private Coroutine dialogueCoroutine;
     private bool playerInside = false;
+    private bool pressedB = false; // ➤ Pour savoir si B a été pressé
 
     void Start()
     {
         HideAll();
+    }
+
+    void Update()
+    {
+        // ➤ Touche B (manette Xbox : "joystick button 1")
+        if (playerInside && Input.GetKeyDown(KeyCode.JoystickButton1))
+        {
+            pressedB = true;
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            dialogueCoroutine = StartCoroutine(TypeLine(extraLine));
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -27,7 +45,7 @@ public class DialogueTyper : MonoBehaviour
         {
             playerInside = true;
             ShowAll();
-
+            pressedB = false;
             index = 0;
 
             if (dialogueCoroutine != null)
@@ -57,13 +75,15 @@ public class DialogueTyper : MonoBehaviour
             yield return StartCoroutine(TypeLine(lines[index]));
             yield return new WaitForSeconds(delayBetweenLines);
             index++;
+
+            // ➤ Si le joueur a appuyé sur B, on coupe le cycle normal
+            if (pressedB)
+                yield break;
         }
 
-        // ➤ Quand tout est fini et que le joueur est toujours dans le trigger
-        if (playerInside)
-        {
+        // ➤ Si B n’a pas été pressé, finir normalement
+        if (playerInside && !pressedB)
             HideAll();
-        }
     }
 
     IEnumerator TypeLine(string line)
@@ -75,6 +95,14 @@ public class DialogueTyper : MonoBehaviour
             if (!playerInside) yield break;
             dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed);
+        }
+
+        // ➤ Si c'est le texte B, attendre avant de disparaître
+        if (pressedB)
+        {
+            yield return new WaitForSeconds(2f);
+            HideAll();
+            playerInside = false;
         }
     }
 

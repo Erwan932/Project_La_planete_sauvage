@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 public class KillPlayerWithBlink : MonoBehaviour
 {
     public string followerLayerName = "Followers";
-    public float timeToKill = 2f;
-    public float blinkSpeed = 8f;
+    public float timeToKill = 0f;
+    public float blinkSpeed = 0f;
 
     private int followerLayer;
     private float timer = 0f;
