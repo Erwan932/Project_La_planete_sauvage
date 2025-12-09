@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class DetectionZone : MonoBehaviour
 {
+    
     [Header("Scan Settings")]
     public float interval = 1f;
     public Image redOverlay;
