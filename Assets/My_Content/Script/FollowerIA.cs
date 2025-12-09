@@ -15,6 +15,9 @@ public class FollowerAI : MonoBehaviour
     public bool IsHidden = false;
     public GameObject tooltip;
 
+    // Ajouter : état une fois déposé
+    public bool isDropped = false;
+
     // Animation & flip
     private Animator animator;
     private bool isFacingRight = true;
@@ -28,10 +31,18 @@ public class FollowerAI : MonoBehaviour
     {
         targetPosition = transform.position;
         inFormation = false;
+        isDropped = false; // Remis à zéro si l'objet est réactivé
     }
 
     private void Update()
     {
+        // Si le follower a été déposé → il ne bouge plus
+        if (isDropped)
+        {
+            SetIdle();
+            return;
+        }
+
         if (inFormation)
         {
             HandleMovement();
@@ -58,6 +69,14 @@ public class FollowerAI : MonoBehaviour
     {
         targetPosition = pos;
         inFormation = true;
+    }
+
+    // APPELÉ UNIQUEMENT PAR LA DROPZONE
+    public void StopFollowing()
+    {
+        isDropped = true;         // ne doit plus suivre
+        inFormation = false;      // désactive la formation automatiquement
+        targetPosition = transform.position; // fixe où il est
     }
 
     // ANIMATIONS 

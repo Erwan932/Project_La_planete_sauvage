@@ -5,10 +5,14 @@ using UnityEngine.SceneManagement;   // ← IMPORTANT pour charger une scène
 public class CrowdManager : MonoBehaviour
 {
     public List<FollowerAI> recruitableFollowers;
+    public List<FollowerAI> SavedFollowers = new List<FollowerAI>();
     public List<FollowerAI> activeFollowers = new List<FollowerAI>();
     public float followDistance = 0.5f;
     public FollowerAI nearbyFollower;
     public bool playerIsHidden = false;
+    public int maxFollowers = 2;
+
+
 
     public void SetHidden(bool state)
     {
@@ -33,24 +37,33 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
     }
 
-    public void TryRecruitNearbyFollower()
+   public void TryRecruitNearbyFollower()
+{
+    if (nearbyFollower == null)
     {
-        if (nearbyFollower == null)
-        {
-            Debug.Log("Aucun follower à proximité");
-            return;
-        }
-
-        if (recruitableFollowers.Contains(nearbyFollower))
-        {
-            nearbyFollower.tooltip.SetActive(false);
-            Debug.Log("Follower recruté !");
-            recruitableFollowers.Remove(nearbyFollower);
-            nearbyFollower.gameObject.SetActive(true);
-            activeFollowers.Add(nearbyFollower);
-            nearbyFollower = null;
-        }
+        Debug.Log("Aucun follower à proximité");
+        return;
     }
+
+    if (activeFollowers.Count >= maxFollowers)
+    {
+        Debug.Log("Limite atteinte : 2 followers maximum");
+        return;
+    }
+
+    if (recruitableFollowers.Contains(nearbyFollower))
+    {
+        nearbyFollower.tooltip.SetActive(false);
+
+        recruitableFollowers.Remove(nearbyFollower);
+        activeFollowers.Add(nearbyFollower);
+
+        nearbyFollower.gameObject.SetActive(true);
+        nearbyFollower = null;
+
+        Debug.Log("Follower recruté !");
+    }
+}
 
     public void TakeDamage()
     {
