@@ -38,7 +38,7 @@ public class DropZone : MonoBehaviour
         if (crowd.recruitableFollowers.Count == 0 &&
             crowd.activeFollowers.Count == 0)
         {
-            Debug.Log("WIN !!! Tous les followers ont été sauvés !");
+            Debug.Log("Niveau Fini !");
         }
     }
 }
