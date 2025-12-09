@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/TestMecanique.unity
     guid: 244ce040b93bff54ba7dad6fe5ffae65
   - enabled: 1
-    path: Assets/Scenes/Map_TestV2.unity
+    path: Assets/Scenes/Map_TestV3.unity
     guid: 3213f15fda4a66d469f43af3b9a6a19b
   - enabled: 1
     path: Assets/Scenes/MENU_Interface/Menu_Principal.unity
