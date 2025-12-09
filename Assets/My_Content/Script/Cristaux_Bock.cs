@@ -13,7 +13,7 @@ public class InteractableObject : MonoBehaviour
 
     void Update()
     {
-        if (player && Input.GetMouseButtonDown(0))
+        if (player && Input.GetButtonDown("Fire1"))
         {
 
             anim.SetTrigger("destroy");

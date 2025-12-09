@@ -3,10 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class KillPlayerWithBlink : MonoBehaviour
 {
-    public string playerTag = "Player";
+    public string followerLayerName = "Followers";
     public float timeToKill = 2f;
     public float blinkSpeed = 8f;
 
+    private int followerLayer;
     private float timer = 0f;
     private bool playerInside = false;
     private bool playerVisible = false;
@@ -17,6 +18,9 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void Start()
     {
+        // Récupère l'index du layer Followers
+        followerLayer = LayerMask.NameToLayer(followerLayerName);
+
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
             colliderbound = col.bounds.max.y;
@@ -28,7 +32,7 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(playerTag))
+        if (other.gameObject.layer == followerLayer)
         {
             playerInside = true;
             timer = 0f;
@@ -38,7 +42,7 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag(playerTag))
+        if (other.gameObject.layer == followerLayer)
         {
             playerInside = false;
             timer = 0f;
@@ -51,7 +55,6 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // Sécuriser le collider
         Collider2D col = GetComponent<Collider2D>();
         if (col == null)
             return;
@@ -59,7 +62,6 @@ public class KillPlayerWithBlink : MonoBehaviour
         float gizmoBound = col.bounds.max.y;
         Vector3 vec = new Vector3(transform.position.x, gizmoBound);
 
-        // Évite toutes les erreurs → ne pas dessiner si pas de joueur
         if (player == null)
             return;
 
@@ -76,7 +78,8 @@ public class KillPlayerWithBlink : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(vec, player.transform.position - vec, 100f);
 
-        playerVisible = (hit.collider != null && hit.collider.CompareTag(playerTag));
+        // Vérifie si le raycast touche un follower
+        playerVisible = (hit.collider != null && hit.collider.gameObject.layer == followerLayer);
 
         if (!playerVisible)
         {
@@ -102,8 +105,7 @@ public class KillPlayerWithBlink : MonoBehaviour
 
     void KillPlayer()
     {
-        Debug.Log("Le joueur est mort dans la zone !");
+        Debug.Log("Un follower est mort dans la zone !");
         SceneManager.LoadScene("Menu_Mort");
     }
 }
-

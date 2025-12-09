@@ -39,7 +39,7 @@ public class Dialogue : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetButtonDown("Fire2"))
         {
             // Jouer le son si un clip est assigné
             if (nextTextSound != null)

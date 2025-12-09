@@ -4,8 +4,8 @@ using TMPro;
 
 public class DialogueTyper : MonoBehaviour
 {
-    public TextMeshProUGUI dialogueText;   
-    public SpriteRenderer[] backgrounds;   
+    public TextMeshProUGUI dialogueText;
+    public SpriteRenderer[] backgrounds;
     public float typingSpeed = 0.03f;
     public float delayBetweenLines = 2f;
 
@@ -37,7 +37,6 @@ public class DialogueTyper : MonoBehaviour
         }
     }
 
-
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -51,7 +50,6 @@ public class DialogueTyper : MonoBehaviour
         }
     }
 
-
     IEnumerator PlayDialogue()
     {
         while (index < lines.Length && playerInside)
@@ -59,6 +57,12 @@ public class DialogueTyper : MonoBehaviour
             yield return StartCoroutine(TypeLine(lines[index]));
             yield return new WaitForSeconds(delayBetweenLines);
             index++;
+        }
+
+        // ➤ Quand tout est fini et que le joueur est toujours dans le trigger
+        if (playerInside)
+        {
+            HideAll();
         }
     }
 
@@ -68,7 +72,7 @@ public class DialogueTyper : MonoBehaviour
 
         foreach (char letter in line)
         {
-            if (!playerInside) yield break; 
+            if (!playerInside) yield break;
             dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed);
         }

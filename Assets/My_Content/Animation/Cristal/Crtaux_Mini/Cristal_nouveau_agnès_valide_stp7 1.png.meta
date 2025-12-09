@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: cca6cf3a67b417c4bbd86dc0f7ace441
+guid: 2f6ef375a0ade5746bb05fc44fffe3be
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 340456460959476766
-    second: Siffle_Anim_Hero3_0
-  - first:
-      213: 3737682265201670294
-    second: Siffle_Anim_Hero3_1
+      213: 65060709537023057
+    second: "Cristal_nouveau_agn\xE8s_valide_stp7 1_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 200
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -142,45 +139,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Siffle_Anim_Hero3_0
+      name: "Cristal_nouveau_agn\xE8s_valide_stp7 1_0"
       rect:
         serializedVersion: 2
-        x: 80
-        y: 11
-        width: 203
-        height: 463
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 45
+        y: 0
+        width: 164
+        height: 278
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e1ce9f0f85b89b400800000000000000
-      internalID: 340456460959476766
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Siffle_Anim_Hero3_1
-      rect:
-        serializedVersion: 2
-        x: 261
-        y: 321
-        width: 12
-        height: 13
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6987f94973aeed330800000000000000
-      internalID: 3737682265201670294
+      spriteID: 1540ac0ee5427e000800000000000000
+      internalID: 65060709537023057
       vertices: []
       indices: 
       edges: []
@@ -189,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: cab1c9a9548469e439f6beb970609b9a
     internalID: 0
     vertices: []
     indices: 
@@ -199,8 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Siffle_Anim_Hero3_0: 340456460959476766
-      Siffle_Anim_Hero3_1: 3737682265201670294
+      "Cristal_nouveau_agn\xE8s_valide_stp7 1_0": 65060709537023057
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -22,13 +22,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // ------ Déplacement horizontal -------
         if (canMove)
             horizontal = Input.GetAxisRaw("Horizontal");
         else
             horizontal = 0f;
 
-        // ------ Saut -------
         if (Input.GetButtonDown("Jump") && isGrounded && canMove)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
@@ -41,20 +39,17 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
         }
 
-        // ------ ATTAQUE (clic gauche) -------
-        // → Toujours autorisé, même si canMove = false
-        if (Input.GetMouseButtonDown(0))
+   
+        if (Input.GetButtonDown("Fire1"))
         {
             animators.SetTrigger("Attack");
         }
 
-        // ------ Action spéciale cristal -------
-        if (!canMove && Input.GetMouseButtonDown(0) && currentCristal != null && currentCristal.Spawnobject != null)
+        if (!canMove && Input.GetButtonDown("Fire1") && currentCristal != null && currentCristal.Spawnobject != null)
         {
             StartCoroutine(currentCristal.BlinkAndDestroy(currentCristal.Spawnobject, 0.5f, 0.1f));
         }
 
-        // ------ Crouch -------
         if (canMove)
         {
             if (Input.GetKeyDown(KeyCode.C)) isCrouching = true;
@@ -67,7 +62,6 @@ public class PlayerMovement : MonoBehaviour
 
         UpdateAnimations();
 
-        // ------ Flip -------
         if (canMove)
             Flip();
     }
@@ -80,14 +74,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // Crouch → stop horizontal movement
         if (isCrouching)
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             return;
         }
 
-        // Movement
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
     }
 
@@ -116,5 +108,10 @@ public class PlayerMovement : MonoBehaviour
         animators.SetBool("IsRunning", horizontal != 0);
         animators.SetBool("IsJumping", !isGrounded);
         animators.SetBool("IsCrouching", isCrouching);
+    }
+
+    public void EndAttack()
+    {
+        animators.ResetTrigger("Attack");
     }
 }

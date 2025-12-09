@@ -18,7 +18,7 @@ public class SpawnCristal : MonoBehaviour
             IsSpawn = true;
 
             Vector3 spawnPos = collision.transform.position;
-            spawnPos.y -= 1.35f;
+            spawnPos.y -= 1.4f;
 
             Spawnobject = Instantiate(Prefab, spawnPos, Quaternion.identity);
 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 58b17cb8a69fcaa45956471cda1227e9
+guid: 424ec005917012a4a857d91b773ad4bf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7935641927752115199
-    second: Siffle_Anim_Hero2_0
+      213: 3792896466456023036
+    second: Siffle_Anim_Hero2 2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,7 +139,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Siffle_Anim_Hero2_0
+      name: Siffle_Anim_Hero2 2_0
       rect:
         serializedVersion: 2
         x: 80
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 10c93a726bfeed190800000000000000
-      internalID: -7935641927752115199
+      spriteID: cff02f89d3313a430800000000000000
+      internalID: 3792896466456023036
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Siffle_Anim_Hero2_0: -7935641927752115199
+      Siffle_Anim_Hero2 2_0: 3792896466456023036
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
