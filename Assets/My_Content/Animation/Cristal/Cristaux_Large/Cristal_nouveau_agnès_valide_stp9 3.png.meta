@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 867ebc14763409b4597afa1d367e4b0d
+guid: 9de625e7183cb2e46a792537faccc142
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8304552287613293982
-    second: "Cristal_nouveau_agn\xE8s_valide_stp9 1_0"
+      213: -5780919928598827556
+    second: "Cristal_nouveau_agn\xE8s_valide_stp9 3_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,7 +139,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "Cristal_nouveau_agn\xE8s_valide_stp9 1_0"
+      name: "Cristal_nouveau_agn\xE8s_valide_stp9 3_0"
       rect:
         serializedVersion: 2
         x: 45
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e9519d16e42bf3370800000000000000
-      internalID: 8304552287613293982
+      spriteID: cdde3ec14fb06cfa0800000000000000
+      internalID: -5780919928598827556
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5acc7ebce31fc454fa5c6c1a2390956b
+    spriteID: 6337a7ab13bb74746894a0c150ea3ec3
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "Cristal_nouveau_agn\xE8s_valide_stp9 1_0": 8304552287613293982
+      "Cristal_nouveau_agn\xE8s_valide_stp9 3_0": -5780919928598827556
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
