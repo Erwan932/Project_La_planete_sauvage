@@ -23,6 +23,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Animator animators;
+    [SerializeField] private TrailRenderer movementTrail; // drag le TrailRenderer du visual
+    [SerializeField] private float trailMinTime = 0.05f;
+    [SerializeField] private float trailMaxTime = 0.45f;
+    [SerializeField] private float trailMinWidth = 0.15f;
+    [SerializeField] private float trailMaxWidth = 0.5f;
 
     private bool wasGroundedLastFrame = true;
 
@@ -35,6 +40,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         originalScale = visual.localScale;      // ⬅️ Important : scale du VISUEL
+        if (movementTrail != null) movementTrail.emitting = false;
+
     }
 
 
@@ -130,6 +137,20 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+
+        // --- Contrôle du TrailRenderer pour sensation de vitesse ---
+    if (movementTrail != null)
+    {
+        float moveSpeed = Mathf.Abs(rb.linearVelocity.x); // vitesse réelle
+        // mappe la vitesse sur [trailMinTime, trailMaxTime] et largeur
+        float t = (speed > 0f) ? Mathf.Clamp01(moveSpeed / Mathf.Abs(speed)) : 0f;
+        movementTrail.time = Mathf.Lerp(trailMinTime, trailMaxTime, t);
+        movementTrail.widthMultiplier = Mathf.Lerp(trailMinWidth, trailMaxWidth, t);
+
+        // n'émet que si on bouge horizontalement significativement
+        movementTrail.emitting = moveSpeed > 0.05f && canMove;
+    }
+
 
         // Gravité custom
         if (rb.linearVelocity.y < 0)
