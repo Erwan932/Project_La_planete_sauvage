@@ -27,7 +27,7 @@ public class CrowdManager : MonoBehaviour
     void Update()
     {
         // Recruter le follower proche si appui sur E
-        if (Input.GetButtonDown("Fire3"))
+        if (Input.GetButtonDown("Fire1"))
             TryRecruitNearbyFollower();
 
         // Décrémenter la foule si le joueur prend des dégâts

@@ -19,34 +19,64 @@ public class TutorialText : MonoBehaviour
 
     private Transform player;
 
+    // --- AJOUT : compteur de pressions sur B ---
+    private int pressCount = 0;
+    private bool tutorialStarted = false;
+
     void Start()
     {
         player = transform.parent; // texte enfant du joueur
 
-        ShowAll();
-        dialogueText.text = movementText;
+        // Le texte est totalement caché au début
+        dialogueText.text = "";
+        HideAll();
     }
 
     void Update()
     {
+        // Tant que le joueur n'a pas pressé 3 fois B → on surveille seulement ça
+        if (!tutorialStarted)
+        {
+            CheckStartTutorialInput();
+            return;
+        }
+
+        // Une fois lancé → fonctionnement normal
         KeepFacingCorrectSide();
         HandleMovementTutorial();
         HandleJumpTutorial();
     }
 
-    // --- Le texte flip comme le joueur (toujours dans le bon sens) ---
+    // --- AJOUT : détecter appui sur B (joystick button 1) ---
+    void CheckStartTutorialInput()
+    {
+        if (Input.GetKeyDown(KeyCode.JoystickButton1))
+        {
+            pressCount++;
+
+            if (pressCount >= 4)
+            {
+                StartTutorial();
+            }
+        }
+    }
+
+    // --- AJOUT : lancement du tutoriel ---
+    void StartTutorial()
+    {
+        tutorialStarted = true;
+
+        ShowAll();
+        dialogueText.text = movementText;
+    }
+
+    // --- Le texte flip comme le joueur ---
     void KeepFacingCorrectSide()
     {
         if (player.localScale.x > 0)
-        {
-            // joueur regarde à droite
             transform.localEulerAngles = new Vector3(0, 0, 0);
-        }
         else
-        {
-            // joueur regarde à gauche
             transform.localEulerAngles = new Vector3(0, 180, 0);
-        }
     }
 
     // --- Détection mouvement ---
@@ -78,7 +108,7 @@ public class TutorialText : MonoBehaviour
         }
     }
 
-    // --- Détection saut avec touche Y ---
+    // --- Détection saut ---
     void HandleJumpTutorial()
     {
         if (hasMoved && !hasJumped)

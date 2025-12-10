@@ -34,10 +34,6 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
         }
 
-        if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0f)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
-        }
 
    
         if (Input.GetButtonDown("Fire1"))
