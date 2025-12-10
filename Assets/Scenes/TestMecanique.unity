@@ -519,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d872efe3a22c702479c4ecb6ab3f1b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera_Movement
-  player: {fileID: 0}
+  player: {fileID: 1966699276}
   offset: {x: 4, y: 1.65, z: -5}
   speed: 2
 --- !u!1001 &292886222
@@ -1195,6 +1195,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &621089829 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8387338802167708772, guid: 4feba0c2d47c5254483bdcb2f4762627, type: 3}
+  m_PrefabInstance: {fileID: 517841221}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &681631264
 GameObject:
   m_ObjectHideFlags: 0
@@ -3018,18 +3023,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   speed: 8
-  jumpingPower: 20
+  jumpingPower: 10
+  visual: {fileID: 1966699276}
   SmokeFX: {fileID: 1966699279}
   isGrounded: 0
   canMove: 1
   currentCristal: {fileID: 0}
   isCrouching: 0
   rb: {fileID: 1966699273}
-  groundCheck: {fileID: 0}
+  groundCheck: {fileID: 621089829}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   animators: {fileID: 1966699280}
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
 --- !u!199 &1966699278
 ParticleSystemRenderer:
   serializedVersion: 6
