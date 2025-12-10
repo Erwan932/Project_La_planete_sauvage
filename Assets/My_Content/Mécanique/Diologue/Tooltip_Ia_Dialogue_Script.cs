@@ -13,12 +13,12 @@ public class DialogueTyper : MonoBehaviour
     public string[] lines;
 
     [TextArea]
-    public string extraLine; // ➤ TEXTE affiché quand on appuie sur B
+    public string extraLine;
 
     private int index = 0;
     private Coroutine dialogueCoroutine;
     private bool playerInside = false;
-    private bool pressedB = false; // ➤ Pour savoir si B a été pressé
+    private bool pressedB = false;
 
     void Start()
     {
@@ -27,7 +27,6 @@ public class DialogueTyper : MonoBehaviour
 
     void Update()
     {
-        // ➤ Touche B (manette Xbox : "joystick button 1")
         if (playerInside && Input.GetKeyDown(KeyCode.JoystickButton1))
         {
             pressedB = true;
@@ -76,12 +75,10 @@ public class DialogueTyper : MonoBehaviour
             yield return new WaitForSeconds(delayBetweenLines);
             index++;
 
-            // ➤ Si le joueur a appuyé sur B, on coupe le cycle normal
             if (pressedB)
                 yield break;
         }
 
-        // ➤ Si B n’a pas été pressé, finir normalement
         if (playerInside && !pressedB)
             HideAll();
     }
@@ -97,7 +94,6 @@ public class DialogueTyper : MonoBehaviour
             yield return new WaitForSeconds(typingSpeed);
         }
 
-        // ➤ Si c'est le texte B, attendre avant de disparaître
         if (pressedB)
         {
             yield return new WaitForSeconds(2f);
@@ -128,5 +124,15 @@ public class DialogueTyper : MonoBehaviour
             Color c = bg.color;
             bg.color = new Color(c.r, c.g, c.b, 0f);
         }
+    }
+
+    // 🔥 FIX pour empêcher le flip du texte
+    void LateUpdate()
+    {
+        Vector3 scale = transform.localScale;
+        if (scale.x < 0)
+            scale.x = Mathf.Abs(scale.x);
+
+        transform.localScale = scale;
     }
 }
