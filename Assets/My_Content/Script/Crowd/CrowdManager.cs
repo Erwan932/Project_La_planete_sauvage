@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement;   // ← IMPORTANT pour charger une scène
 
 public class CrowdManager : MonoBehaviour
@@ -11,6 +12,11 @@ public class CrowdManager : MonoBehaviour
     public FollowerAI nearbyFollower;
     public bool playerIsHidden = false;
     public int maxFollowers = 2;
+    [Header("Feedback Recrutement")]
+    public ParticleSystem joinParticles;
+    public GameObject followerJoinUI;
+    public float followerJoinDuration = 1f;
+    private Coroutine uiRoutine;
 
 
 
@@ -62,6 +68,8 @@ public void TryRecruitNearbyFollower()
         nearbyFollower = null;
 
         Debug.Log("Follower recruté !");
+        PlayJoinFeedback();
+
     }
 }
 
@@ -115,4 +123,42 @@ public void TryRecruitNearbyFollower()
         if (nearbyFollower == follower)
             nearbyFollower = null;
     }
+    public void PlayJoinFeedback()
+{
+    // Particules
+    if (joinParticles != null)
+        joinParticles.Play();
+
+    // UI
+    if (followerJoinUI != null)
+    {
+        if (uiRoutine != null)
+            StopCoroutine(uiRoutine);
+
+        uiRoutine = StartCoroutine(ShowJoinUI());
+    }
+}
+
+private IEnumerator ShowJoinUI()
+{
+    followerJoinUI.SetActive(true);
+
+    // Si tu veux un petit scale-up automatique :
+    Vector3 startScale = Vector3.one * 0.6f;
+    Vector3 endScale = Vector3.one;
+    float t = 0f;
+
+    followerJoinUI.transform.localScale = startScale;
+
+    while (t < 1f)
+    {
+        t += Time.deltaTime * 4f;
+        followerJoinUI.transform.localScale = Vector3.Lerp(startScale, endScale, t);
+        yield return null;
+    }
+
+    yield return new WaitForSeconds(followerJoinDuration);
+
+    followerJoinUI.SetActive(false);
+}
 }
