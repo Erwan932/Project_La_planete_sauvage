@@ -1,54 +1,41 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.Collections;
 
 public class MenuMortController : MonoBehaviour
 {
-    [Header("Références UI")]
-    public CanvasGroup buttonsGroup;  // Le panel contenant les boutons
-
-    [Header("Réglages")]
-    public float delayBeforeShow = 2f;
-    public float fadeDuration = 1f;
+    [Header("Boutons du Canvas")]
+    public Button boutonStart;
+    public Button boutonMenu;
+    public Button boutonQuit;
 
     void Start()
     {
-        // Commence invisible
-        if (buttonsGroup != null)
-        {
-            buttonsGroup.alpha = 0f;
-            buttonsGroup.interactable = false;
-            buttonsGroup.blocksRaycasts = false;
-        }
+        // Les boutons sont invisibles au début
+        SetButtonsVisible(false);
 
-        StartCoroutine(ShowButtons());
+        // On active les boutons après 2 secondes
+        StartCoroutine(ShowButtonsWithDelay());
+
+        // Branche les clics des boutons
+        boutonStart.onClick.AddListener(OnStartClick);
+        boutonMenu.onClick.AddListener(LoadMenu);
+        boutonQuit.onClick.AddListener(OnQuitClick);
     }
 
-    IEnumerator ShowButtons()
+    IEnumerator ShowButtonsWithDelay()
     {
-        // ⏳ Attendre avant d'afficher
-        yield return new WaitForSeconds(delayBeforeShow);
-
-        float t = 0;
-
-        while (t < fadeDuration)
-        {
-            t += Time.deltaTime;
-            float alpha = t / fadeDuration;
-
-            if (buttonsGroup != null)
-                buttonsGroup.alpha = alpha;
-
-            yield return null;
-        }
-
-        // 🔥 Activation finale
-        buttonsGroup.alpha = 1f;
-        buttonsGroup.interactable = true;
-        buttonsGroup.blocksRaycasts = true;
+        yield return new WaitForSeconds(2f);
+        SetButtonsVisible(true);
     }
 
-    // === Boutons ===
+    void SetButtonsVisible(bool visible)
+    {
+        boutonStart.gameObject.SetActive(visible);
+        boutonMenu.gameObject.SetActive(visible);
+        boutonQuit.gameObject.SetActive(visible);
+    }
 
     public void OnStartClick()
     {
