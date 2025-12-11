@@ -59,7 +59,7 @@ public void TryRecruitNearbyFollower()
 
     if (recruitableFollowers.Contains(nearbyFollower))
     {
-        nearbyFollower.tooltip.SetActive(false);
+        // Ligne tooltip supprimée
 
         recruitableFollowers.Remove(nearbyFollower);
         activeFollowers.Add(nearbyFollower);
@@ -69,9 +69,9 @@ public void TryRecruitNearbyFollower()
 
         Debug.Log("Follower recruté !");
         PlayJoinFeedback();
-
     }
 }
+
 
 
     public void TakeDamage()
