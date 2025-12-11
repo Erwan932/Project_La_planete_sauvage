@@ -1,10 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InteractableObject : MonoBehaviour
 {
     private bool player = false;
     public ParticleSystem interactFX;
     private Animator anim;
+
+    [Header("Audio")]
+    public AudioClip destroySound;    // Le son que tu glisseras dans Unity
+    public float soundVolume = 1f;    // Volume du son
 
     void Start()
     {
@@ -15,13 +19,16 @@ public class InteractableObject : MonoBehaviour
     {
         if (player && Input.GetButtonDown("Fire3"))
         {
-
             anim.SetTrigger("destroy");
 
-            interactFX.Play();
+            if (interactFX != null)
+                interactFX.Play();
+
+            // 🎵 Jouer le son SANS AudioSource
+            if (destroySound != null)
+                AudioSource.PlayClipAtPoint(destroySound, transform.position, soundVolume);
 
             Destroy(gameObject, 1f);
-
         }
     }
 
@@ -43,5 +50,3 @@ public class InteractableObject : MonoBehaviour
         }
     }
 }
-
-
