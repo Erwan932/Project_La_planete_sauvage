@@ -143,17 +143,17 @@ private IEnumerator ShowJoinUI()
 {
     followerJoinUI.SetActive(true);
 
-    // Si tu veux un petit scale-up automatique :
-    Vector3 startScale = Vector3.one * 0.6f;
-    Vector3 endScale = Vector3.one;
+    Vector2 startScale2D = Vector2.one * 1f; // plus petit au départ
+    Vector2 endScale2D = Vector2.one * 1f;   // taille finale réduite
     float t = 0f;
 
-    followerJoinUI.transform.localScale = startScale;
+    followerJoinUI.transform.localScale = new Vector3(startScale2D.x, startScale2D.y, 1f);
 
     while (t < 1f)
     {
         t += Time.deltaTime * 4f;
-        followerJoinUI.transform.localScale = Vector3.Lerp(startScale, endScale, t);
+        Vector2 currentScale2D = Vector2.Lerp(startScale2D, endScale2D, t);
+        followerJoinUI.transform.localScale = new Vector3(currentScale2D.x, currentScale2D.y, 1f);
         yield return null;
     }
 
@@ -161,4 +161,5 @@ private IEnumerator ShowJoinUI()
 
     followerJoinUI.SetActive(false);
 }
+
 }

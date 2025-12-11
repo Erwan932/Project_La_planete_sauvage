@@ -21,7 +21,7 @@ public class UICrowdDisplay : MonoBehaviour
         if (crowd == null) return;
 
         // Mise à jour des valeurs UI
-        recruitableText.text = " " + crowd.recruitableFollowers.Count;
+        recruitableText.text = " " + crowd.recruitableFollowers.Count + " /3 ";
         activeText.text = " " + crowd.activeFollowers.Count + " / 2";
         savedText.text = " " + crowd.SavedFollowers.Count + " / 3";
     }
