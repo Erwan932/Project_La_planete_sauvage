@@ -102,22 +102,26 @@ public class FollowerAI : MonoBehaviour
         animator.SetBool("IsCrouching", false);
     }
 
-    // --- FLIP ---
-    private void CopyFlip()
+private void CopyFlip()
+{
+    if (player == null) return;
+
+    PlayerMovement pm = player.GetComponent<PlayerMovement>();
+    if (pm == null) return;
+
+    bool playerFacingRight = pm.IsFacingRight();
+
+    if (playerFacingRight != isFacingRight)
     {
-        if (player == null) return;
+        isFacingRight = playerFacingRight;
 
-        bool playerFacingRight = player.localScale.x > 0;
-
-        if (playerFacingRight != isFacingRight)
-        {
-            isFacingRight = playerFacingRight;
-
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1 : -1);
-            transform.localScale = scale;
-        }
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1 : -1);
+        transform.localScale = scale;
     }
+}
+
+
 
     // --- TRIGGER : tooltip & signalement au CrowdManager ---
     private void OnTriggerEnter2D(Collider2D collision)

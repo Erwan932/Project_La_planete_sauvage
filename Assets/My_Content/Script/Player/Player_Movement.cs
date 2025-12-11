@@ -158,6 +158,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+    public bool IsFacingRight()
+    {
+        return isFacingRight;
+    }
+
     // ----------- FLIP FIABLE ----------
     private void Flip()
     {
@@ -168,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
             // Flip avec rotation Y
             visual.localRotation = Quaternion.Euler(0f, isFacingRight ? 0f : 180f, 0f);
         }
-    }
+    } 
 
 
     private void OnCollisionEnter2D(Collision2D collision)
