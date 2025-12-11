@@ -132,7 +132,7 @@ public class TutorialText : MonoBehaviour
     {
         if (hasMoved && !hasJumped)
         {
-            if (Input.GetKeyDown("Fire2")) // Touche Y manette Xbox
+            if (Input.GetButton("Jump")) 
             {
                 hasJumped = true;
                 dialogueText.text = "";

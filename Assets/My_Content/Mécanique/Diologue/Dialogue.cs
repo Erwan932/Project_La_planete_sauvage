@@ -18,30 +18,32 @@ public class Dialogue : MonoBehaviour
     public float slideSpeed = 4f;
 
     [Header("Son lorsqu'on avance le dialogue")]
-    public AudioClip nextTextSound;      // Son joué à chaque E
-    private AudioSource audioSource;     // Source audio interne
+    public AudioClip nextTextSound;
+    private AudioSource audioSource;
+
+    private bool dialogueActive = false;
 
     void Start()
     {
-        // Ajout automatique du composant AudioSource si absent
+        // Prépare l’audio
         audioSource = gameObject.GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
         audioSource.playOnAwake = false;
 
-        if (player != null)
-            player.canMove = false;
-
-        textcomponent.text = string.Empty;
-        StartDialogue();
+        // Le dialogue ne démarre plus automatiquement
+        textcomponent.text = "";
+        panel.gameObject.SetActive(false);
     }
 
     void Update()
     {
+        if (!dialogueActive)
+            return;
+
         if (Input.GetButtonDown("Fire2"))
         {
-            // Jouer le son si un clip est assigné
             if (nextTextSound != null)
                 audioSource.PlayOneShot(nextTextSound);
 
@@ -57,6 +59,21 @@ public class Dialogue : MonoBehaviour
         }
     }
 
+    // --- ACTIVATION depuis un trigger ---
+    public void ActivateDialogue()
+    {
+        if (dialogueActive) return;
+
+        dialogueActive = true;
+
+        if (player != null)
+            player.canMove = false;
+
+        panel.gameObject.SetActive(true);
+
+        StartDialogue();
+    }
+
     void StartDialogue()
     {
         index = 0;
@@ -67,7 +84,7 @@ public class Dialogue : MonoBehaviour
     {
         textcomponent.text = "";
 
-        foreach (char c in lines[index].ToCharArray())
+        foreach (char c in lines[index])
         {
             textcomponent.text += c;
             yield return new WaitForSeconds(textspeed);
@@ -87,6 +104,7 @@ public class Dialogue : MonoBehaviour
                 player.canMove = true;
 
             StartCoroutine(SlideAndClose());
+            dialogueActive = false;
         }
     }
 
