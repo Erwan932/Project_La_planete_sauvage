@@ -5,7 +5,6 @@ using System.Collections;
 public class Dialogue : MonoBehaviour
 {
     public TextMeshProUGUI textcomponent;
-    public string[] lines;
     public float textspeed = 0.05f;
 
     public PlayerMovement player;
@@ -23,6 +22,13 @@ public class Dialogue : MonoBehaviour
 
     private bool dialogueActive = false;
 
+    // Les lignes chargées depuis un trigger
+    private string[] currentLines;
+
+    // 🔥 Position d'origine du panel (fix du bug d'apparition)
+    private Vector2 originalPanelPosition;
+
+
     void Start()
     {
         // Prépare l’audio
@@ -32,10 +38,13 @@ public class Dialogue : MonoBehaviour
 
         audioSource.playOnAwake = false;
 
-        // Le dialogue ne démarre plus automatiquement
         textcomponent.text = "";
         panel.gameObject.SetActive(false);
+
+        // 🔥 On enregistre la position d'origine du panel
+        originalPanelPosition = panel.anchoredPosition;
     }
+
 
     void Update()
     {
@@ -47,53 +56,66 @@ public class Dialogue : MonoBehaviour
             if (nextTextSound != null)
                 audioSource.PlayOneShot(nextTextSound);
 
-            if (textcomponent.text == lines[index])
+            if (textcomponent.text == currentLines[index])
             {
                 NextLine();
             }
             else
             {
                 StopAllCoroutines();
-                textcomponent.text = lines[index];
+                textcomponent.text = currentLines[index];
             }
         }
     }
 
-    // --- ACTIVATION depuis un trigger ---
-    public void ActivateDialogue()
+    public void ForceCloseDialogue()
+    {
+        StopAllCoroutines();
+        dialogueActive = false;
+
+        if (panel != null)
+            panel.gameObject.SetActive(false);
+
+        if (player != null)
+            player.canMove = true;
+    }
+
+    public void StartNewDialogue(string[] newLines)
     {
         if (dialogueActive) return;
+
+        currentLines = newLines;
+        index = 0;
 
         dialogueActive = true;
 
         if (player != null)
             player.canMove = false;
 
+        // 🔥 Remet le panel à sa position d'origine AVANT d'afficher
+        panel.anchoredPosition = originalPanelPosition;
+
         panel.gameObject.SetActive(true);
 
-        StartDialogue();
-    }
-
-    void StartDialogue()
-    {
-        index = 0;
         StartCoroutine(TypeLine());
     }
+
 
     IEnumerator TypeLine()
     {
         textcomponent.text = "";
 
-        foreach (char c in lines[index])
+        foreach (char c in currentLines[index])
         {
             textcomponent.text += c;
             yield return new WaitForSeconds(textspeed);
         }
     }
 
+
     void NextLine()
     {
-        if (index < lines.Length - 1)
+        if (index < currentLines.Length - 1)
         {
             index++;
             StartCoroutine(TypeLine());
@@ -107,6 +129,7 @@ public class Dialogue : MonoBehaviour
             dialogueActive = false;
         }
     }
+
 
     IEnumerator SlideAndClose()
     {
@@ -122,6 +145,6 @@ public class Dialogue : MonoBehaviour
             yield return null;
         }
 
-        gameObject.SetActive(false);
+        panel.gameObject.SetActive(false);
     }
 }
