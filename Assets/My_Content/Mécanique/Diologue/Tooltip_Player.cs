@@ -7,6 +7,10 @@ public class TutorialText : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public SpriteRenderer[] backgrounds;
 
+    [Header("Suivi du joueur")]
+    public Transform player;                     // le joueur à suivre
+    public Vector3 offset = new Vector3(0, 1.5f, 0); // position relative au joueur
+
     [Header("Textes modifiables")]
     public string movementText = "Joystick pour se déplacer";
     public string jumpText = "Touche Y pour sauter";
@@ -17,17 +21,13 @@ public class TutorialText : MonoBehaviour
     private bool hasMoved = false;
     private bool hasJumped = false;
 
-    private Transform player;
-
     // --- AJOUT : compteur de pressions sur B ---
     private int pressCount = 0;
     private bool tutorialStarted = false;
 
     void Start()
     {
-        player = transform.parent; // texte enfant du joueur
-
-        // Le texte est totalement caché au début
+        // Le texte est caché au démarrage
         dialogueText.text = "";
         HideAll();
     }
@@ -47,7 +47,20 @@ public class TutorialText : MonoBehaviour
         HandleJumpTutorial();
     }
 
-    // --- AJOUT : détecter appui sur B (joystick button 1) ---
+    void LateUpdate()
+    {
+        FollowPlayer();
+    }
+
+    // --- SUIVI DU JOUEUR ---
+    void FollowPlayer()
+    {
+        if (player == null) return;
+
+        transform.position = player.position + offset;
+    }
+
+    // --- Détecter appui sur B ---
     void CheckStartTutorialInput()
     {
         if (Input.GetKeyDown(KeyCode.JoystickButton1))
@@ -61,7 +74,7 @@ public class TutorialText : MonoBehaviour
         }
     }
 
-    // --- AJOUT : lancement du tutoriel ---
+    // --- Lancement du tutoriel ---
     void StartTutorial()
     {
         tutorialStarted = true;
@@ -70,21 +83,17 @@ public class TutorialText : MonoBehaviour
         dialogueText.text = movementText;
     }
 
-    // --- Le texte flip comme le joueur mais reste lisible ---
+    // --- Le texte reste lisible malgré le flip du joueur ---
     void KeepFacingCorrectSide()
     {
+        if (player == null) return;
+
         Vector3 scale = transform.localScale;
 
         if (player.localScale.x > 0)
-        {
-            // Joueur regarde à droite → texte normal
             scale.x = Mathf.Abs(scale.x);
-        }
         else
-        {
-            // Joueur regarde à gauche → on inverse pour compenser
             scale.x = -Mathf.Abs(scale.x);
-        }
 
         transform.localScale = scale;
     }
@@ -123,7 +132,7 @@ public class TutorialText : MonoBehaviour
     {
         if (hasMoved && !hasJumped)
         {
-            if (Input.GetKeyDown(KeyCode.JoystickButton3)) // Touche Y manette Xbox
+            if (Input.GetButton("Jump")) // Touche Y manette Xbox
             {
                 hasJumped = true;
                 dialogueText.text = "";
