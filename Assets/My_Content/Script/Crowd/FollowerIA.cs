@@ -13,7 +13,6 @@ public class FollowerAI : MonoBehaviour
 
     [Header("État du follower")]
     public bool IsHidden = false;
-    public GameObject tooltip;
 
     // Ajouter : état une fois déposé
     public bool isDropped = false;
@@ -102,34 +101,30 @@ public class FollowerAI : MonoBehaviour
         animator.SetBool("IsCrouching", false);
     }
 
-private void CopyFlip()
-{
-    if (player == null) return;
-
-    PlayerMovement pm = player.GetComponent<PlayerMovement>();
-    if (pm == null) return;
-
-    bool playerFacingRight = pm.IsFacingRight();
-
-    if (playerFacingRight != isFacingRight)
+    private void CopyFlip()
     {
-        isFacingRight = playerFacingRight;
+        if (player == null) return;
 
-        Vector3 scale = transform.localScale;
-        scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1 : -1);
-        transform.localScale = scale;
+        PlayerMovement pm = player.GetComponent<PlayerMovement>();
+        if (pm == null) return;
+
+        bool playerFacingRight = pm.IsFacingRight();
+
+        if (playerFacingRight != isFacingRight)
+        {
+            isFacingRight = playerFacingRight;
+
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1 : -1);
+            transform.localScale = scale;
+        }
     }
-}
 
-
-
-    // --- TRIGGER : tooltip & signalement au CrowdManager ---
+    // --- TRIGGER : signalement au CrowdManager ---
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            tooltip.SetActive(true);
-
             CrowdManager manager = collision.GetComponent<CrowdManager>();
             if (manager != null)
                 manager.SetNearbyFollower(this);
@@ -142,8 +137,6 @@ private void CopyFlip()
     {
         if (collision.CompareTag("Player"))
         {
-            tooltip.SetActive(false);
-
             CrowdManager manager = collision.GetComponent<CrowdManager>();
             if (manager != null)
                 manager.ClearNearbyFollower(this);
@@ -152,4 +145,3 @@ private void CopyFlip()
         }
     }
 }
-
