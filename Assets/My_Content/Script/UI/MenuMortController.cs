@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class MenuMortController : MonoBehaviour
@@ -28,6 +29,9 @@ public class MenuMortController : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         SetButtonsVisible(true);
+
+        // Sélectionner automatiquement le premier bouton pour la manette/clavier
+        EventSystem.current.SetSelectedGameObject(boutonStart.gameObject);
     }
 
     void SetButtonsVisible(bool visible)
@@ -53,5 +57,28 @@ public class MenuMortController : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+    void Update()
+    {
+        // Exemple : valider avec la touche "Start" de la manette (Input Manager classique)
+        if (Input.GetButtonDown("Submit")) // par défaut "Enter" ou bouton A
+        {
+            GameObject current = EventSystem.current.currentSelectedGameObject;
+            if (current != null)
+            {
+                Button btn = current.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.Invoke();
+                }
+            }
+        }
+
+        // Exemple : quitter avec la touche "Cancel" (par défaut "Esc" ou bouton B)
+        if (Input.GetButtonDown("Cancel"))
+        {
+            OnQuitClick();
+        }
     }
 }

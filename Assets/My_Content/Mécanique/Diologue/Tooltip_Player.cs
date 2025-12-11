@@ -70,13 +70,23 @@ public class TutorialText : MonoBehaviour
         dialogueText.text = movementText;
     }
 
-    // --- Le texte flip comme le joueur ---
+    // --- Le texte flip comme le joueur mais reste lisible ---
     void KeepFacingCorrectSide()
     {
+        Vector3 scale = transform.localScale;
+
         if (player.localScale.x > 0)
-            transform.localEulerAngles = new Vector3(0, 0, 0);
+        {
+            // Joueur regarde à droite → texte normal
+            scale.x = Mathf.Abs(scale.x);
+        }
         else
-            transform.localEulerAngles = new Vector3(0, 180, 0);
+        {
+            // Joueur regarde à gauche → on inverse pour compenser
+            scale.x = -Mathf.Abs(scale.x);
+        }
+
+        transform.localScale = scale;
     }
 
     // --- Détection mouvement ---

@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
-  m_FirstSelected: {fileID: 0}
+  m_FirstSelected: {fileID: 40582515}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &277890060
@@ -646,10 +646,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1205079592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 898, y: 472}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &496444303
 Animator:
@@ -880,6 +880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e253115289edb848846463bd3a066bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  startButton: {fileID: 40582517}
 --- !u!114 &1205079589
 MonoBehaviour:
   m_ObjectHideFlags: 0

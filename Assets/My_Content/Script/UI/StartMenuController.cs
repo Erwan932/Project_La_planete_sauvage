@@ -1,12 +1,21 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartMenuController : MonoBehaviour
 {
-    public void OnStartClick()     
-    
+    public Button startButton;
+
+    void Start()
     {
-       SceneManager.LoadScene("Map_TestV2");
+        // Sélectionne le bouton Start au début
+        EventSystem.current.SetSelectedGameObject(startButton.gameObject);
+    }
+
+    public void OnStartClick()
+    {
+        SceneManager.LoadScene("Map_Test_V3");
     }
 
     public void OnQuitClick()
@@ -17,3 +26,4 @@ public class StartMenuController : MonoBehaviour
         Application.Quit();
     }
 }
+
