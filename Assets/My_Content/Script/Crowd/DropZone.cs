@@ -183,7 +183,7 @@ public class DropZone : MonoBehaviour
         // Met à jour dynamiquement le texte depuis le CrowdManager
         if (depositCountText != null)
         {
-            depositCountText.text = " + " + droppedCount + " Sauvées" ; 
+            depositCountText.text = "+ " + droppedCount + " Sauvées" ; 
         }
 
         if (depositRoutine != null)
