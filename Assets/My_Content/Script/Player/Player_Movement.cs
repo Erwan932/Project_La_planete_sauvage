@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpingPower = 0f;
     private bool isFacingRight = true;
 
-    public Transform visual;                // ⬅️ OBJET VISUEL QUI FLIP + SQUASH
+    public Transform visual;
     private Vector3 originalScale;
 
     public ParticleSystem SmokeFX;
@@ -16,14 +16,13 @@ public class PlayerMovement : MonoBehaviour
     public bool canMove = true;
 
     [HideInInspector] public SpawnCristal currentCristal;
-
     public bool isCrouching = false;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Animator animators;
-    [SerializeField] private TrailRenderer movementTrail; // drag le TrailRenderer du visual
+    [SerializeField] private TrailRenderer movementTrail;
     [SerializeField] private float trailMinTime = 0.05f;
     [SerializeField] private float trailMaxTime = 0.45f;
     [SerializeField] private float trailMinWidth = 0.15f;
@@ -31,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
 
     private bool wasGroundedLastFrame = true;
 
-    // --- Gravité custom ---
     [Header("Jump Gravity Settings")]
     [SerializeField] private float fallMultiplier = 2.5f;
     [SerializeField] private float lowJumpMultiplier = 2f;
@@ -39,9 +37,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        originalScale = visual.localScale;      // ⬅️ Important : scale du VISUEL
+        originalScale = visual.localScale;
+        originalScale.x = Mathf.Abs(originalScale.x);  // Protection
         if (movementTrail != null) movementTrail.emitting = false;
-
     }
 
 
@@ -52,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
         else
             horizontal = 0f;
 
-        // SAUT
+        // Jump
         if (Input.GetButtonDown("Jump") && isGrounded && canMove)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
@@ -64,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isGrounded && rb.linearVelocity.y > 0)
         {
             visual.localScale = new Vector3(
-                originalScale.x * (isFacingRight ? 0.85f : -0.85f),
+                originalScale.x * 0.85f,
                 originalScale.y * 1.15f,
                 originalScale.z
             );
@@ -76,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
             visual.localScale = Vector3.Lerp(
                 visual.localScale,
                 new Vector3(
-                    originalScale.x * (isFacingRight ? 1 : -1),
+                    originalScale.x,
                     originalScale.y,
                     originalScale.z
                 ),
@@ -88,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
         if (!wasGroundedLastFrame && isGrounded)
         {
             visual.localScale = new Vector3(
-                originalScale.x * (isFacingRight ? 1.2f : -1.2f),
+                originalScale.x * 1.2f,
                 originalScale.y * 0.7f,
                 originalScale.z
             );
@@ -98,14 +96,12 @@ public class PlayerMovement : MonoBehaviour
 
         wasGroundedLastFrame = isGrounded;
 
-
         // Attaque
         if (Input.GetButtonDown("Fire3"))
             animators.SetTrigger("Attack");
 
         if (!canMove && Input.GetButtonDown("Fire3") && currentCristal != null && currentCristal.Spawnobject != null)
             StartCoroutine(currentCristal.BlinkAndDestroy(currentCristal.Spawnobject, 0.5f, 0.1f));
-
 
         // Accroupi
         if (canMove)
@@ -138,19 +134,17 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
 
-        // --- Contrôle du TrailRenderer pour sensation de vitesse ---
-    if (movementTrail != null)
-    {
-        float moveSpeed = Mathf.Abs(rb.linearVelocity.x); // vitesse réelle
-        // mappe la vitesse sur [trailMinTime, trailMaxTime] et largeur
-        float t = (speed > 0f) ? Mathf.Clamp01(moveSpeed / Mathf.Abs(speed)) : 0f;
-        movementTrail.time = Mathf.Lerp(trailMinTime, trailMaxTime, t);
-        movementTrail.widthMultiplier = Mathf.Lerp(trailMinWidth, trailMaxWidth, t);
+        // --- Contrôle du TrailRenderer ---
+        if (movementTrail != null)
+        {
+            float moveSpeed = Mathf.Abs(rb.linearVelocity.x);
+            float t = (speed > 0f) ? Mathf.Clamp01(moveSpeed / Mathf.Abs(speed)) : 0f;
 
-        // n'émet que si on bouge horizontalement significativement
-        movementTrail.emitting = moveSpeed > 0.05f && canMove;
-    }
+            movementTrail.time = Mathf.Lerp(trailMinTime, trailMaxTime, t);
+            movementTrail.widthMultiplier = Mathf.Lerp(trailMinWidth, trailMaxWidth, t);
 
+            movementTrail.emitting = moveSpeed > 0.05f && canMove;
+        }
 
         // Gravité custom
         if (rb.linearVelocity.y < 0)
@@ -164,18 +158,15 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    // ----------- FLIP SUR L'OBJET VISUEL UNIQUEMENT ----------
+    // ----------- FLIP FIABLE ----------
     private void Flip()
     {
         if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
 
-            visual.localScale = new Vector3(
-                originalScale.x * (isFacingRight ? 1 : -1),
-                visual.localScale.y,
-                visual.localScale.z
-            );
+            // Flip avec rotation Y
+            visual.localRotation = Quaternion.Euler(0f, isFacingRight ? 0f : 180f, 0f);
         }
     }
 
@@ -201,7 +192,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    // ---- Animation du retour à la forme ----
     private IEnumerator ResetScale()
     {
         float duration = 0.12f;
@@ -209,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 startScale = visual.localScale;
         Vector3 targetScale = new Vector3(
-            originalScale.x * (isFacingRight ? 1 : -1),
+            originalScale.x,
             originalScale.y,
             originalScale.z
         );
