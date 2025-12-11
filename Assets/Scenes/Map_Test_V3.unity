@@ -1884,7 +1884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &148537176
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25253,7 +25253,7 @@ MonoBehaviour:
   - Cette UI, affiche le nombre de follower actif dans le groupe.
   dialogue: {fileID: 1351642336}
   spriteToShow: {fileID: 0}
-  canvasObject: {fileID: 0}
+  canvasObject: {fileID: 148537175}
 --- !u!61 &1698256436
 BoxCollider2D:
   m_ObjectHideFlags: 0
