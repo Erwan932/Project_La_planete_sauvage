@@ -1,28 +1,41 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerRespawn : MonoBehaviour
 {
-    private Vector3 savedPosition;   // Position sauvegardée
-    private bool hasSavedPosition;   // Pour savoir si un checkpoint a été activé
+    private Vector3 spawnPosition;
 
     private void Start()
     {
-        // Au début, on sauvegarde la position initiale du joueur
-        savedPosition = transform.position;
-        hasSavedPosition = true;
+        // Si on a dÃ©jÃ  un checkpoint sauvegardÃ© (aprÃ¨s mort â†’ reload)
+        if (CheckpointData.hasSavedPosition)
+        {
+            spawnPosition = CheckpointData.savedPosition;
+            transform.position = spawnPosition;
+        }
+        else
+        {
+            // Sinon, premiÃ¨re position du joueur
+            spawnPosition = transform.position;
+            CheckpointData.savedPosition = spawnPosition;
+            CheckpointData.hasSavedPosition = true;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Si le joueur entre dans une Trigger Box avec le tag "Checkpoint"
+        // Activation d'un checkpoint
         if (other.CompareTag("Checkpoint"))
         {
-            savedPosition = transform.position;
-            hasSavedPosition = true;
-            Debug.Log("Checkpoint atteint ! Position sauvegardée : " + savedPosition);
+            spawnPosition = transform.position;
+
+            CheckpointData.savedPosition = spawnPosition;
+            CheckpointData.hasSavedPosition = true;
+
+            Debug.Log("Checkpoint activÃ© : " + spawnPosition);
         }
 
-        // Si le joueur touche un objet avec le tag "Trap"
+        // Mort du joueur
         if (other.CompareTag("Trap"))
         {
             DieAndRespawn();
@@ -31,19 +44,9 @@ public class PlayerRespawn : MonoBehaviour
 
     private void DieAndRespawn()
     {
-        Debug.Log("Le joueur est mort !");
+        Debug.Log("Le joueur est mort -> reload de la scÃ¨ne");
 
-        if (hasSavedPosition)
-        {
-            // On replace le joueur à la dernière position sauvegardée
-            transform.position = savedPosition;
-            Debug.Log("Respawn au checkpoint : " + savedPosition);
-        }
-        else
-        {
-            // Si aucun checkpoint n'a été activé, respawn à la position initiale
-            transform.position = Vector3.zero;
-            Debug.Log("Respawn à la position par défaut (0,0)");
-        }
+        // Recharge la scÃ¨ne actuelle
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
