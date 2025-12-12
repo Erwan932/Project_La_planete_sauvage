@@ -46,19 +46,19 @@ IEnumerator ScanSequence()
 {
     scanInProgress = true;
 
-    // 1. Idle de Eyes
+    // Idle de Eyes
     eyesAnimator.SetTrigger(eyesIdleTrigger);
     yield return new WaitForSeconds(0.1f);
 
-    // 2. Spot de Eyes
+    // Spot de Eyes
     eyesAnimator.SetTrigger(eyesSpotTrigger);
     yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Spot"));
 
-    // 3. Overlay apparaît puis disparaît
+    // Overlay apparaît puis disparaît
     yield return StartCoroutine(FadeOverlay(true, overlayFadeDuration));
     yield return StartCoroutine(FadeOverlay(false, overlayFadeDuration));
 
-    // 4. Hand Attack + HandUp seulement si le joueur n’est pas caché
+    // Hand Attack + HandUp seulement si le joueur n’est pas caché
     if (!crowdManager.playerIsHidden)
     {
         handAnimator.SetTrigger(attackTrigger);
@@ -70,11 +70,11 @@ IEnumerator ScanSequence()
         yield return StartCoroutine(WaitForAnimation(handAnimator, "handUp"));
     }
 
-    // 5. Decline de Eyes
+    // Decline de Eyes
     eyesAnimator.SetTrigger(eyesDeclineTrigger);
     yield return StartCoroutine(WaitForAnimation(eyesAnimator, "Decline"));
 
-    // 6. Retour à Idle de Eyes
+    // Retour à Idle de Eyes
     eyesAnimator.SetTrigger(eyesIdleTrigger);
 
     scanInProgress = false;
