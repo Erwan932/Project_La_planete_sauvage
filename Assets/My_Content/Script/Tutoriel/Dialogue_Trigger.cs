@@ -29,7 +29,7 @@ public class DialogueTrigger : MonoBehaviour
 
         // Lance le dialogue
         if (dialogue != null)
-            dialogue.StartNewDialogue(lines);
+           dialogue.StartNewDialogue(lines);
 
         CheckpointData.savedStates[nameID] = true;
     }

@@ -4,100 +4,87 @@ using TMPro;
 
 public class DialogueTyper : MonoBehaviour
 {
+    [Header("Références UI")]
     public TextMeshProUGUI dialogueText;
-    public SpriteRenderer[] backgrounds;   // Le(s) Tooltip_Background à détruire
+    public SpriteRenderer[] backgrounds;
+
+    [Header("Réglages du dialogue")]
     public float typingSpeed = 0.03f;
     public float delayBetweenLines = 2f;
-    public string nameID; // Sprite à afficher
 
-
+    [Header("Identifiant et textes")]
+    public string nameID; // Pour sauvegarde
     [TextArea(3, 10)]
-    public string[] lines;
-
+    public string[] defaultLines; // Lignes par défaut
     [TextArea]
-    public string extraLine;
+    public string triggerText;    // Texte spécifique pour ce trigger (optionnel)
 
+    private string[] linesToUse;
     private int index = 0;
     private Coroutine dialogueCoroutine;
     private bool playerInside = false;
-    private bool pressedB = false;
 
     void Start()
     {
         HideAll();
         if (!CheckpointData.savedStates.ContainsKey(nameID))
             CheckpointData.savedStates.Add(nameID, false);
-    }
 
-    void Update()
-    {
-        if (playerInside && Input.GetKeyDown(KeyCode.JoystickButton1))
-        {
-            pressedB = true;
-
-            if (dialogueCoroutine != null)
-                StopCoroutine(dialogueCoroutine);
-
-            dialogueCoroutine = StartCoroutine(TypeLine(extraLine));
-        }
+        linesToUse = defaultLines; // On initialise avec les lignes par défaut
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID] == true)
+        if (!other.CompareTag("Player") || (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID]))
             return;
-        if (other.CompareTag("Player") && !playerInside)
-        {
-            playerInside = true;
-            pressedB = false;
-            index = 0;
 
-            ShowAll();
+        playerInside = true;
+        index = 0;
 
-            if (dialogueCoroutine != null)
-                StopCoroutine(dialogueCoroutine);
+        // Si un texte spécifique est défini, on l'utilise
+        if (!string.IsNullOrEmpty(triggerText))
+            linesToUse = new string[] { triggerText };
+        else
+            linesToUse = defaultLines;
 
-            dialogueCoroutine = StartCoroutine(PlayDialogue());
-            CheckpointData.savedStates[nameID] = true;
+        ShowAll();
 
-        }
+        if (dialogueCoroutine != null)
+            StopCoroutine(dialogueCoroutine);
+
+        dialogueCoroutine = StartCoroutine(PlayDialogue());
+        CheckpointData.savedStates[nameID] = true;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+
+        playerInside = false;
+
+        if (dialogueCoroutine != null)
+            StopCoroutine(dialogueCoroutine);
+
+        HideAll();
+
+        // Détruit définitivement le/les backgrounds
+        foreach (var bg in backgrounds)
         {
-            playerInside = false;
-
-            if (dialogueCoroutine != null)
-                StopCoroutine(dialogueCoroutine);
-
-            HideAll();
-
-            // 🔥 Détruit définitivement le/les Tooltip_Background
-            foreach (var bg in backgrounds)
-            {
-                if (bg != null)
-                    Destroy(bg.gameObject);
-            }
-
-            // ⚠ La trigger NE se détruit pas → le joueur peut revenir
+            if (bg != null)
+                Destroy(bg.gameObject);
         }
     }
 
     IEnumerator PlayDialogue()
     {
-        while (index < lines.Length && playerInside)
+        while (index < linesToUse.Length && playerInside)
         {
-            yield return StartCoroutine(TypeLine(lines[index]));
+            yield return StartCoroutine(TypeLine(linesToUse[index]));
             yield return new WaitForSeconds(delayBetweenLines);
             index++;
-
-            if (pressedB)
-                yield break;
         }
 
-        if (playerInside && !pressedB)
+        if (playerInside)
             HideAll();
     }
 
@@ -110,13 +97,6 @@ public class DialogueTyper : MonoBehaviour
             if (!playerInside) yield break;
             dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed);
-        }
-
-        if (pressedB)
-        {
-            yield return new WaitForSeconds(2f);
-            HideAll();
-            playerInside = false;
         }
     }
 
@@ -149,7 +129,7 @@ public class DialogueTyper : MonoBehaviour
         }
     }
 
-    // 🔥 Empêche le texte de se retourner
+    // Empêche le texte de se retourner
     void LateUpdate()
     {
         Vector3 scale = transform.localScale;
