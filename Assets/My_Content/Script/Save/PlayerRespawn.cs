@@ -5,9 +5,16 @@ public class PlayerRespawn : MonoBehaviour
 {
     private Vector3 spawnPosition;
 
+    private RespawnableObject[] respawnObjects;
+
+    private void Awake()
+    {
+        // On récupère tous les objets respawnables de la scène
+        respawnObjects = FindObjectsOfType<RespawnableObject>();
+    }
+
     private void Start()
     {
-        // Si on a déjà un checkpoint sauvegardé (après mort → reload)
         if (CheckpointData.hasSavedPosition)
         {
             spawnPosition = CheckpointData.savedPosition;
@@ -15,7 +22,6 @@ public class PlayerRespawn : MonoBehaviour
         }
         else
         {
-            // Sinon, première position du joueur
             spawnPosition = transform.position;
             CheckpointData.savedPosition = spawnPosition;
             CheckpointData.hasSavedPosition = true;
@@ -24,10 +30,9 @@ public class PlayerRespawn : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Activation d'un checkpoint
         if (other.CompareTag("Checkpoint"))
         {
-            spawnPosition = transform.position;
+            spawnPosition = other.transform.position;
 
             CheckpointData.savedPosition = spawnPosition;
             CheckpointData.hasSavedPosition = true;
@@ -35,7 +40,6 @@ public class PlayerRespawn : MonoBehaviour
             Debug.Log("Checkpoint activé : " + spawnPosition);
         }
 
-        // Mort du joueur
         if (other.CompareTag("Trap"))
         {
             DieAndRespawn();
@@ -44,9 +48,9 @@ public class PlayerRespawn : MonoBehaviour
 
     private void DieAndRespawn()
     {
-        Debug.Log("Le joueur est mort -> reload de la scène");
+        Debug.Log("Respawn sans reload !");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        // 1️⃣ Respawn du joueur
 
-        // Recharge la scène actuelle
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

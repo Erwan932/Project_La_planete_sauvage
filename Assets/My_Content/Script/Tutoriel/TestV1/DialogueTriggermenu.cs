@@ -8,10 +8,11 @@ public class DialogueTriggermenu : MonoBehaviour
     public string[] lines;
 
     [Header("Références")]
-    public Dialogue dialogue;          // ton script Dialogue
-    public GameObject spriteToShow;    // ton sprite à afficher
-    public GameObject canvasObject;    // ton canvas/panel
-    public Image imageToFlash;         // image à faire clignoter
+    public Dialogue dialogue;          // Script Dialogue
+    public GameObject spriteToShow;    // Sprite à afficher
+    public GameObject canvasObject;    // Canvas / panel
+    public Image imageToFlash;         // Image à faire clignoter
+    public string nameID;         // Image à faire clignoter
 
     [Header("Effet Zoom")]
     public float minScale = 0.9f;
@@ -33,23 +34,37 @@ public class DialogueTriggermenu : MonoBehaviour
 
         if (imageToFlash != null)
             originalImageColor = imageToFlash.color;
+
+        if(!CheckpointData.savedStates.ContainsKey(nameID))
+            CheckpointData.savedStates.Add(nameID, false);
     }
 
     private void Update()
     {
-        if (!isEffectActive) return;
+        if (!isEffectActive)
+            return;
 
         // 🔹 Zoom / dézoom du canvas
         if (canvasObject != null)
         {
-            float scale = Mathf.Lerp(minScale, maxScale, (Mathf.Sin(Time.time * zoomSpeed) + 1f) / 2f);
+            float scale = Mathf.Lerp(
+                minScale,
+                maxScale,
+                (Mathf.Sin(Time.time * zoomSpeed) + 1f) / 2f
+            );
+
             canvasObject.transform.localScale = originalScale * scale;
         }
 
         // 🔹 Clignotement de l'image
         if (imageToFlash != null)
         {
-            float alpha = Mathf.Lerp(0f, flashAlpha, (Mathf.Sin(Time.time * flashSpeed) + 1f) / 2f);
+            float alpha = Mathf.Lerp(
+                0f,
+                flashAlpha,
+                (Mathf.Sin(Time.time * flashSpeed) + 1f) / 2f
+            );
+
             Color c = originalImageColor;
             c.a = alpha;
             imageToFlash.color = c;
@@ -58,6 +73,8 @@ public class DialogueTriggermenu : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D coll)
     {
+        if (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID] == true)
+            return;
         if (coll.CompareTag("Player"))
         {
             // Affiche le sprite
@@ -74,6 +91,8 @@ public class DialogueTriggermenu : MonoBehaviour
             // Lance le dialogue
             if (dialogue != null)
                 dialogue.StartNewDialogue(lines);
+            CheckpointData.savedStates[nameID] = true;
+
         }
     }
 
@@ -88,11 +107,11 @@ public class DialogueTriggermenu : MonoBehaviour
             // 🔹 Arrête les effets
             isEffectActive = false;
 
-            // 🔹 Remet le canvas et l'image à l'état normal (scale et couleur)
+            // 🔹 Remet le canvas et l’image à l’état normal
             if (canvasObject != null)
             {
                 canvasObject.transform.localScale = originalScale;
-                canvasObject.SetActive(true); // reste visible même après sortie
+                canvasObject.SetActive(true); // reste visible
             }
 
             if (imageToFlash != null)

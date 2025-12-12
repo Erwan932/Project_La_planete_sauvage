@@ -34,10 +34,14 @@ public class TutorialText : MonoBehaviour
 
         if (extraImage != null)
             extraImage.SetActive(false);
+        if (!CheckpointData.savedStates.ContainsKey("title"))
+            CheckpointData.savedStates.Add("title", true);
     }
 
     void Update()
     {
+        if (CheckpointData.savedStates.ContainsKey("title") && CheckpointData.savedStates["title"] == true)
+           return;
         if (!tutorialStarted)
         {
             StartTutorial();

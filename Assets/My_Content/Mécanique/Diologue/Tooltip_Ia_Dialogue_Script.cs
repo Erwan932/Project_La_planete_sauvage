@@ -8,6 +8,8 @@ public class DialogueTyper : MonoBehaviour
     public SpriteRenderer[] backgrounds;   // Le(s) Tooltip_Background à détruire
     public float typingSpeed = 0.03f;
     public float delayBetweenLines = 2f;
+    public string nameID; // Sprite à afficher
+
 
     [TextArea(3, 10)]
     public string[] lines;
@@ -23,6 +25,8 @@ public class DialogueTyper : MonoBehaviour
     void Start()
     {
         HideAll();
+        if (!CheckpointData.savedStates.ContainsKey(nameID))
+            CheckpointData.savedStates.Add(nameID, false);
     }
 
     void Update()
@@ -40,6 +44,8 @@ public class DialogueTyper : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID] == true)
+            return;
         if (other.CompareTag("Player") && !playerInside)
         {
             playerInside = true;
@@ -52,6 +58,8 @@ public class DialogueTyper : MonoBehaviour
                 StopCoroutine(dialogueCoroutine);
 
             dialogueCoroutine = StartCoroutine(PlayDialogue());
+            CheckpointData.savedStates[nameID] = true;
+
         }
     }
 

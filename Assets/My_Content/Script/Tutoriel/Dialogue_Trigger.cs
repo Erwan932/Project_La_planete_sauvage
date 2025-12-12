@@ -9,9 +9,18 @@ public class DialogueTrigger : MonoBehaviour
     [Header("Références")]
     public Dialogue dialogue;       // Script Dialogue
     public GameObject spriteToShow; // Sprite à afficher
+    public string nameID; // Sprite à afficher
+
+    private void Start()
+    {
+        if (!CheckpointData.savedStates.ContainsKey(nameID))
+            CheckpointData.savedStates.Add(nameID, false);
+    }
 
     private void OnTriggerEnter2D(Collider2D coll)
     {
+        if (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID] == true)
+            return;
         if (!coll.CompareTag("Player")) return;
 
         // Affiche le sprite si besoin
@@ -21,6 +30,8 @@ public class DialogueTrigger : MonoBehaviour
         // Lance le dialogue
         if (dialogue != null)
             dialogue.StartNewDialogue(lines);
+
+        CheckpointData.savedStates[nameID] = true;
     }
 
     private void OnTriggerExit2D(Collider2D coll)
