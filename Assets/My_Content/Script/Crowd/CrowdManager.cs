@@ -12,11 +12,24 @@ public class CrowdManager : MonoBehaviour
     public FollowerAI nearbyFollower;
     public bool playerIsHidden = false;
     public int maxFollowers = 2;
+
     [Header("Feedback Recrutement")]
     public ParticleSystem joinParticles;
     public GameObject followerJoinUI;
     public float followerJoinDuration = 1f;
     private Coroutine uiRoutine;
+
+    [Header("Feedback Dégâts")]
+    public GameObject damageUI;
+    public float damageUIDuration = 1f;
+    private Coroutine damageUIRoutine;
+
+    [Header("Feedback Limite Followers")]
+    public GameObject maxFollowerUI;
+    public float maxFollowerUIDuration = 1f;
+    private Coroutine maxFollowerUIRoutine;
+
+
 
 
 
@@ -32,7 +45,7 @@ public class CrowdManager : MonoBehaviour
 
     void Update()
     {
-        // Recruter le follower proche si appui sur E
+        // Recruter le follower proche si appui sur Fire
         if (Input.GetButtonDown("Fire1"))
             TryRecruitNearbyFollower();
 
@@ -54,6 +67,7 @@ public void TryRecruitNearbyFollower()
     if (activeFollowers.Count >= maxFollowers)
     {
         Debug.Log("Limite atteinte : 2 followers maximum");
+        PlayMaxFollowerFeedback();   
         return;
     }
 
@@ -76,6 +90,8 @@ public void TryRecruitNearbyFollower()
 
     public void TakeDamage()
     {
+        PlayDamageFeedback();
+
         if (activeFollowers.Count > 0)
         {
             FollowerAI lost = activeFollowers[activeFollowers.Count - 1];
@@ -85,9 +101,10 @@ public void TryRecruitNearbyFollower()
         else
         {
             Debug.Log("GAME OVER");
-            SceneManager.LoadScene("Menu_Mort"); // ← Chargement de la scène Game Over
+            SceneManager.LoadScene("Menu_Mort");
         }
     }
+
 
     public void UpdateFollowers()
     {
@@ -124,42 +141,106 @@ public void TryRecruitNearbyFollower()
             nearbyFollower = null;
     }
     public void PlayJoinFeedback()
-{
-    // Particules
-    if (joinParticles != null)
-        joinParticles.Play();
-
-    // UI
-    if (followerJoinUI != null)
     {
-        if (uiRoutine != null)
-            StopCoroutine(uiRoutine);
+        // Particules
+        if (joinParticles != null)
+            joinParticles.Play();
 
-        uiRoutine = StartCoroutine(ShowJoinUI());
-    }
-}
+        // UI
+        if (followerJoinUI != null)
+        {
+            if (uiRoutine != null)
+                StopCoroutine(uiRoutine);
 
-private IEnumerator ShowJoinUI()
-{
-    followerJoinUI.SetActive(true);
-
-    Vector2 startScale2D = Vector2.one * 1f; // plus petit au départ
-    Vector2 endScale2D = Vector2.one * 1f;   // taille finale réduite
-    float t = 0f;
-
-    followerJoinUI.transform.localScale = new Vector3(startScale2D.x, startScale2D.y, 1f);
-
-    while (t < 1f)
-    {
-        t += Time.deltaTime * 4f;
-        Vector2 currentScale2D = Vector2.Lerp(startScale2D, endScale2D, t);
-        followerJoinUI.transform.localScale = new Vector3(currentScale2D.x, currentScale2D.y, 1f);
-        yield return null;
+            uiRoutine = StartCoroutine(ShowJoinUI());
+        }
     }
 
-    yield return new WaitForSeconds(followerJoinDuration);
+    private IEnumerator ShowJoinUI()
+    {
+        followerJoinUI.SetActive(true);
 
-    followerJoinUI.SetActive(false);
-}
+        Vector2 startScale2D = Vector2.one * 1f; // plus petit au départ
+        Vector2 endScale2D = Vector2.one * 1f;   // taille finale réduite
+        float t = 0f;
 
+        followerJoinUI.transform.localScale = new Vector3(startScale2D.x, startScale2D.y, 1f);
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 4f;
+            Vector2 currentScale2D = Vector2.Lerp(startScale2D, endScale2D, t);
+            followerJoinUI.transform.localScale = new Vector3(currentScale2D.x, currentScale2D.y, 1f);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(followerJoinDuration);
+
+        followerJoinUI.SetActive(false);
+    }
+
+    public void PlayDamageFeedback()
+    {
+        if (damageUI != null)
+        {
+            if (damageUIRoutine != null)
+                StopCoroutine(damageUIRoutine);
+    
+            damageUIRoutine = StartCoroutine(ShowDamageUI());
+        }
+    }
+
+    private IEnumerator ShowDamageUI()
+    {
+        damageUI.SetActive(true);
+
+        Vector2 start = Vector2.one * 0.8f;
+        Vector2 end = Vector2.one * 1f;
+        float t = 0f;
+
+        damageUI.transform.localScale = start;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 4f;
+            damageUI.transform.localScale = Vector2.Lerp(start, end, t);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(damageUIDuration);
+
+        damageUI.SetActive(false);
+    }
+    public void PlayMaxFollowerFeedback()
+    {
+        if (maxFollowerUI != null)
+        {
+            if (maxFollowerUIRoutine != null)
+                StopCoroutine(maxFollowerUIRoutine);
+
+            maxFollowerUIRoutine = StartCoroutine(ShowMaxFollowerUI());
+        }
+    }
+
+    private IEnumerator ShowMaxFollowerUI()
+    {
+        maxFollowerUI.SetActive(true);
+
+        Vector2 start = Vector2.one * 0.8f;
+        Vector2 end = Vector2.one * 1f;
+        float t = 0f;
+
+        maxFollowerUI.transform.localScale = start;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 4f;
+            maxFollowerUI.transform.localScale = Vector2.Lerp(start, end, t);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(maxFollowerUIDuration);
+
+        maxFollowerUI.SetActive(false);
+    }
 }

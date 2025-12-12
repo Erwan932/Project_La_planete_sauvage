@@ -19,16 +19,16 @@ public class DropZone : MonoBehaviour
     public float depositFeedbackDuration = 2f;
     private Coroutine depositRoutine;
 
+    [Header("Tween Settings")]
+    public float uiTweenSpeed = 5f;
+    public Vector3 playerUIOffset = new Vector3(0, 1.5f, 0);
+    public Vector3 shipUIOffset = new Vector3(0, 2f, 0);
+
     private bool playerInZone = false;
     private CrowdManager crowd;
     private Transform playerTransform;
     private Coroutine playerUIRoutine;
     private Coroutine shipUIRoutine;
-
-    [Header("Tween Settings")]
-    public float uiTweenSpeed = 5f;
-    public Vector3 playerUIOffset = new Vector3(0, 1.5f, 0);
-    public Vector3 shipUIOffset = new Vector3(0, 2f, 0);
 
     private void Start()
     {
