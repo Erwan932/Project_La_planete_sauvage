@@ -7370,18 +7370,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 441191684}
-  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.175723, y: 1.247958, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 445179106}
   - {fileID: 1365383937}
-  m_Father: {fileID: 2094227639}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.13000488, y: -5.4800005}
+  m_AnchoredPosition: {x: 121.41, y: 2.05}
   m_SizeDelta: {x: 4.1047, y: 4.3611}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &443883062
@@ -91761,7 +91761,7 @@ MonoBehaviour:
   shipUI: {fileID: 441191684}
   depositFeedbackUI: {fileID: 1365383936}
   depositCountText: {fileID: 369255336}
-  depositFeedbackDuration: 3
+  depositFeedbackDuration: 4
   uiTweenSpeed: 5
   playerUIOffset: {x: 0, y: 1.5, z: 0}
   shipUIOffset: {x: 0, y: 2, z: 0}
@@ -91857,7 +91857,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.050904274, y: 0.8508911}
+  m_Offset: {x: 0.15875125, y: 0.8508911}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -91867,7 +91867,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 9.9798565, y: 0.2788999}
+  m_Size: {x: 5.2806554, y: 0.2788999}
   m_EdgeRadius: 0
 --- !u!4 &2094227639
 Transform:
@@ -91878,11 +91878,10 @@ Transform:
   m_GameObject: {fileID: 2094227635}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 121.43, y: -3.21, z: 0}
-  m_LocalScale: {x: 0.8505405, y: 0.80130905, z: 1}
+  m_LocalPosition: {x: 121.42, y: -2.3611, z: 0}
+  m_LocalScale: {x: 1.5040712, y: 1.5803151, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 441191688}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &2095458923
@@ -92619,6 +92618,7 @@ SceneRoots:
   - {fileID: 1068636218}
   - {fileID: 1579780334}
   - {fileID: 275268708}
+  - {fileID: 441191688}
   - {fileID: 2094227639}
   - {fileID: 188664356}
   - {fileID: 865643064}

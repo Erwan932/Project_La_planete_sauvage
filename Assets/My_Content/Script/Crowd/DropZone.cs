@@ -67,24 +67,31 @@ public class DropZone : MonoBehaviour
 
     private void DetachFollowers()
     {
-        int droppedCount = 0;
+    int droppedCount = 0;
 
-        for (int i = crowd.activeFollowers.Count - 1; i >= 0; i--)
+    for (int i = crowd.activeFollowers.Count - 1; i >= 0; i--)
+    {
+        FollowerAI follower = crowd.activeFollowers[i];
+        crowd.activeFollowers.Remove(follower);
+        crowd.SavedFollowers.Add(follower);
+
+        follower.StopFollowing();
+        follower.targetPosition = follower.transform.position;
+
+        // Empêcher le glissement
+        Rigidbody2D rb = follower.GetComponent<Rigidbody2D>();
+        if (rb != null)
         {
-            FollowerAI follower = crowd.activeFollowers[i];
-            crowd.activeFollowers.Remove(follower);
-            crowd.SavedFollowers.Add(follower);
-
-            follower.StopFollowing();
-            follower.targetPosition = follower.transform.position;
-
-            droppedCount++;
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0;
         }
 
-        if (droppedCount > 0)
-            ShowDepositUI(droppedCount);
+        droppedCount++;
+    }
 
-        CheckWin();
+    // 👉 TU AVAIS OUBLIÉ CECI
+    if (droppedCount > 0)
+        ShowDepositUI(droppedCount);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
