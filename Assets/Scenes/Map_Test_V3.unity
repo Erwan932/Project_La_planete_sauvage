@@ -747,6 +747,99 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &53771200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 53771203}
+  - component: {fileID: 53771202}
+  - component: {fileID: 53771201}
+  m_Layer: 0
+  m_Name: Trigger_Tooltip
+  m_TagString: Tutoriel
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &53771201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53771200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 736e21272faceaa43a082584a4cda238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  tutorial: {fileID: 725887459}
+  playerTag: Player
+--- !u!61 &53771202
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53771200}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.0052965283, y: 0.043091238}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.7556177, y: 1.0861824}
+  m_EdgeRadius: 0
+--- !u!4 &53771203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53771200}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.8, y: 0.34, z: 0}
+  m_LocalScale: {x: 3.270249, y: 6.8605647, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &55857933
 GameObject:
   m_ObjectHideFlags: 0
@@ -2933,7 +3026,6 @@ Transform:
   - {fileID: 519068473}
   - {fileID: 1653780356}
   - {fileID: 872639779}
-  - {fileID: 2008756473}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &205948470
@@ -3326,7 +3418,7 @@ Camera:
   far clip plane: 833.66
   field of view: 60
   orthographic: 1
-  orthographic size: 6.19
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4252,9 +4344,9 @@ GameObject:
   m_Component:
   - component: {fileID: 278542145}
   - component: {fileID: 278542144}
-  - component: {fileID: 278542143}
   - component: {fileID: 278542147}
   - component: {fileID: 278542146}
+  - component: {fileID: 278542148}
   m_Layer: 0
   m_Name: Trigger_But_du_jeu (2)
   m_TagString: Untagged
@@ -4262,23 +4354,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &278542143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278542142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0af9ddcd245bb0b4e9c806e7fa2cd46c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  lines:
-  - Mais c'est quoi ses critasux qui bloque le chemin
-  dialogue: {fileID: 1351642336}
-  spriteToShow: {fileID: 0}
-  canvasObject: {fileID: 1714564540}
 --- !u!61 &278542144
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4313,7 +4388,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 1.1156832}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -4323,7 +4398,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 3.2313664}
   m_EdgeRadius: 0
 --- !u!224 &278542145
 RectTransform:
@@ -4341,7 +4416,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.51, y: -2.51}
+  m_AnchoredPosition: {x: 6.78, y: -0.53}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &278542146
@@ -4382,6 +4457,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 278542142}
   m_CullTransparentMesh: 1
+--- !u!114 &278542148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278542142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c72d7a6803bfe429e66a8b15775914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  lines:
+  - Mais c'est quoi c'est cristaux qui bloque le chemin !!
+  - Je dois les casser pour passer
+  dialogue: {fileID: 1351642336}
+  spriteToShow: {fileID: 0}
 --- !u!1 &279205448
 GameObject:
   m_ObjectHideFlags: 0
@@ -4812,7 +4904,6 @@ Transform:
   - {fileID: 1801140025}
   - {fileID: 2050026035}
   - {fileID: 417390815}
-  - {fileID: 1715495304}
   - {fileID: 858057122}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6568,7 +6659,7 @@ Transform:
   m_GameObject: {fileID: 382516833}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 81.92, y: 3.3488998, z: 0}
+  m_LocalPosition: {x: 81.92, y: 2.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8449,7 +8540,7 @@ GameObject:
   - component: {fileID: 527893456}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8992,6 +9083,12 @@ MonoBehaviour:
   dialogue: {fileID: 1351642336}
   spriteToShow: {fileID: 0}
   canvasObject: {fileID: 0}
+  imageToFlash: {fileID: 0}
+  minScale: 0.9
+  maxScale: 1.1
+  zoomSpeed: 2
+  flashSpeed: 5
+  flashAlpha: 0.6
 --- !u!61 &642107646
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9026,7 +9123,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.49875283}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -9036,7 +9133,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 2.241342}
   m_EdgeRadius: 0
 --- !u!4 &642107647
 Transform:
@@ -9050,7 +9147,8 @@ Transform:
   m_LocalPosition: {x: 27.88, y: 0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1715495304}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &646865138 stripped
@@ -9781,7 +9879,6 @@ MonoBehaviour:
   tutorialLines:
   - CE DEPLACER
   - POUR SAUTER
-  delayBetweenTutorials: 1
   extraImage: {fileID: 113341567}
   imageAppearsAtIndex: 1
 --- !u!222 &725887460
@@ -10186,7 +10283,7 @@ GameObject:
   m_Component:
   - component: {fileID: 824380466}
   - component: {fileID: 824380465}
-  - component: {fileID: 824380464}
+  - component: {fileID: 824380467}
   m_Layer: 0
   m_Name: Trigger_But_du_jeu (1)
   m_TagString: Untagged
@@ -10194,23 +10291,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &824380464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 824380463}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0af9ddcd245bb0b4e9c806e7fa2cd46c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  lines:
-  - "Une personne \xE0 sauver"
-  dialogue: {fileID: 1351642336}
-  spriteToShow: {fileID: 0}
-  canvasObject: {fileID: 0}
 --- !u!61 &824380465
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10245,7 +10325,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.442567}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -10255,7 +10335,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 1.885134}
   m_EdgeRadius: 0
 --- !u!4 &824380466
 Transform:
@@ -10272,6 +10352,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &824380467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824380463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c72d7a6803bfe429e66a8b15775914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  lines:
+  - "Une personne \xE0 sauver"
+  dialogue: {fileID: 1351642336}
+  spriteToShow: {fileID: 0}
 --- !u!1 &824878522
 GameObject:
   m_ObjectHideFlags: 0
@@ -17559,11 +17655,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1412369240759237368, guid: fac5b9f1c509bef43aac41e6532df9e9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -41.7
+      value: -32.44
       objectReference: {fileID: 0}
     - target: {fileID: 1412369240759237368, guid: fac5b9f1c509bef43aac41e6532df9e9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.576
+      value: -1.59
       objectReference: {fileID: 0}
     - target: {fileID: 1412369240759237368, guid: fac5b9f1c509bef43aac41e6532df9e9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17615,7 +17711,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8128021890156152621, guid: fac5b9f1c509bef43aac41e6532df9e9, type: 3}
       propertyPath: m_SortingOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23830,7 +23926,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 42.64064, y: 1.48014, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.76667, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1823108847}
@@ -24392,7 +24488,7 @@ Transform:
   m_GameObject: {fileID: 1590147531}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.350285, y: 1.3764054, z: 0}
+  m_LocalPosition: {x: 18.19, y: 1.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25196,6 +25292,12 @@ MonoBehaviour:
   dialogue: {fileID: 1351642336}
   spriteToShow: {fileID: 0}
   canvasObject: {fileID: 148537175}
+  imageToFlash: {fileID: 148537179}
+  minScale: 0.9
+  maxScale: 1.1
+  zoomSpeed: 7
+  flashSpeed: 7
+  flashAlpha: 11
 --- !u!61 &1698256436
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -25230,7 +25332,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.026097894}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -25240,7 +25342,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 1.9134247}
   m_EdgeRadius: 0
 --- !u!4 &1698256437
 Transform:
@@ -25251,8 +25353,8 @@ Transform:
   m_GameObject: {fileID: 1698256434}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.47, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 13.182, y: 1.8, z: 0}
+  m_LocalScale: {x: 2.4917, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -87257,11 +87359,11 @@ Transform:
   m_GameObject: {fileID: 1715495301}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 83.23597, y: 0.23720074, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 320.09, y: -0.95000005, z: 0}
+  m_LocalScale: {x: 3.651807, y: 3.493665, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 293163824}
+  m_Father: {fileID: 642107647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1744493201
 GameObject:
@@ -89522,7 +89624,7 @@ Transform:
   m_GameObject: {fileID: 1895051026}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 100, y: 3.3488998, z: 0}
+  m_LocalPosition: {x: 100, y: 1.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -90210,7 +90312,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1958080993
 RectTransform:
   m_ObjectHideFlags: 0
@@ -90515,11 +90617,11 @@ Transform:
   m_GameObject: {fileID: 2008756472}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.10063934, y: 0.22013986, z: 0}
+  m_LocalPosition: {x: 43.76064, y: -1.6998601, z: 0}
   m_LocalScale: {x: 1.2251999, y: 1.1165999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 192607100}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2008756474
 SpriteRenderer:
@@ -92494,6 +92596,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 215510438}
   - {fileID: 489943722}
+  - {fileID: 2008756473}
   - {fileID: 192607100}
   - {fileID: 317112420}
   - {fileID: 1564813932}
@@ -92523,3 +92626,4 @@ SceneRoots:
   - {fileID: 824380466}
   - {fileID: 642107647}
   - {fileID: 278542145}
+  - {fileID: 53771203}

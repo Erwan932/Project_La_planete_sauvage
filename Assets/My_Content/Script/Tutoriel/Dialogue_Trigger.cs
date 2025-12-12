@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -6,24 +6,19 @@ public class DialogueTrigger : MonoBehaviour
     [TextArea(2, 5)]
     public string[] lines;
 
-    [Header("Références")]
-    public Dialogue dialogue;          // ton script Dialogue
-    public GameObject spriteToShow;    // ton sprite à afficher
-    public GameObject canvasObject;    // ton canvas/panel
+    [Header("R�f�rences")]
+    public Dialogue dialogue;       // ton script Dialogue
+    public GameObject spriteToShow; // ton sprite � afficher
 
     private void OnTriggerEnter2D(Collider2D coll)
     {
         if (coll.CompareTag("Player"))
         {
-            // 🔹 Affiche le sprite
+            // Affiche le sprite si besoin
             if (spriteToShow != null)
                 spriteToShow.SetActive(true);
 
-            // 🔹 Affiche le canvas
-            if (canvasObject != null)
-                canvasObject.SetActive(true);
-
-            // 🔹 Lance le dialogue
+            // Lance le dialogue
             if (dialogue != null)
                 dialogue.StartNewDialogue(lines);
         }
@@ -33,15 +28,11 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (coll.CompareTag("Player"))
         {
-            // 🔹 Cache le sprite
+            // Cache le sprite si besoin
             if (spriteToShow != null)
                 spriteToShow.SetActive(false);
 
-            // 🔹 Cache le canvas
-            if (canvasObject != null)
-                canvasObject.SetActive(false);
-
-            // 🔹 Ferme le dialogue proprement
+            // Ferme le dialogue proprement
             if (dialogue != null)
                 dialogue.ForceCloseDialogue();
         }

@@ -11,21 +11,21 @@ public class TutorialText : MonoBehaviour
     public Transform player;
     public Vector3 offset = new Vector3(0, 1.5f, 0);
 
-    [Header("Liste des textes du tutoriel")]
+    [Header("Textes du tutoriel")]
     [TextArea(2, 3)]
-    public string[] tutorialLines;   // 🔥 tu peux écrire autant de textes que tu veux ici !
-
-    [Header("Délais")]
-    public float delayBetweenTutorials = 1f;
+    public string[] tutorialLines;   // 0 = texte 1, 1 = texte 2
 
     [Header("UI Supplémentaire")]
-    public GameObject extraImage;    // Image à montrer sur un texte spécifique
-    public int imageAppearsAtIndex = 1; // 🔥 Index du texte où l’image s’affiche
+    public GameObject extraImage;
+    public int imageAppearsAtIndex = 1;
 
     private int currentIndex = 0;
     private bool tutorialStarted = false;
     private bool hasMoved = false;
     private bool hasJumped = false;
+
+    // 🔥 Empêche le texte 2 de rejouer une 2e fois
+    private bool finalTextAlreadyPlayed = false;
 
     void Start()
     {
@@ -45,8 +45,13 @@ public class TutorialText : MonoBehaviour
         }
 
         KeepFacingCorrectSide();
-        HandleMovementTutorial();
-        HandleJumpTutorial();
+
+        // 🔥 SEULEMENT POUR LE TEXTE 1
+        if (currentIndex == 0)
+        {
+            HandleMovementTutorial();
+            HandleJumpTutorial();
+        }
     }
 
     void LateUpdate()
@@ -64,69 +69,62 @@ public class TutorialText : MonoBehaviour
     {
         tutorialStarted = true;
         currentIndex = 0;
-
         ShowLine(currentIndex);
     }
 
     void ShowLine(int index)
     {
+        if (index >= tutorialLines.Length)
+        {
+            HideAll();
+            return;
+        }
+
         ShowAll();
         dialogueText.text = tutorialLines[index];
 
-        // 🔥 Affiche l'image SEULEMENT sur le texte choisi
         if (extraImage != null)
             extraImage.SetActive(index == imageAppearsAtIndex);
     }
 
+    // 🔥 TEXTE 1 : mouvement
     void HandleMovementTutorial()
     {
-        if (!hasMoved && currentIndex == 0)
+        float mx = Input.GetAxis("Horizontal");
+        float my = Input.GetAxis("Vertical");
+
+        if (!hasMoved && (Mathf.Abs(mx) > 0.2f || Mathf.Abs(my) > 0.2f))
         {
-            float mx = Input.GetAxis("Horizontal");
-            float my = Input.GetAxis("Vertical");
-
-            if (Mathf.Abs(mx) > 0.2f || Mathf.Abs(my) > 0.2f)
-            {
-                hasMoved = true;
-
-                NextLine();
-            }
-        }
-    }
-
-    void HandleJumpTutorial()
-    {
-        if (currentIndex == 1 && !hasJumped)
-        {
-            if (Input.GetButton("Jump"))
-            {
-                hasJumped = true;
-
-                NextLine();
-            }
-        }
-    }
-
-    void NextLine()
-    {
-        HideAll();
-
-        currentIndex++;
-
-        if (currentIndex < tutorialLines.Length)
-        {
-            Invoke(nameof(ShowNextLineDelayed), delayBetweenTutorials);
-        }
-        else
-        {
-            // Fin du tutoriel
+            hasMoved = true;
             HideAll();
         }
     }
 
-    void ShowNextLineDelayed()
+    // 🔥 TEXTE 1 : saut
+    void HandleJumpTutorial()
     {
+        if (!hasJumped && Input.GetButtonDown("Jump"))
+        {
+            hasJumped = true;
+            HideAll();
+        }
+    }
+
+    // 🔥 APPELÉ PAR LA DEUXIÈME TRIGGER BOX
+    public void ShowFinalText()
+    {
+        if (finalTextAlreadyPlayed)
+            return; // ❌ ne plus jamais rejouer
+
+        finalTextAlreadyPlayed = true;
+        currentIndex = 1; // texte 2
         ShowLine(currentIndex);
+    }
+
+    // 🔥 APPELÉ LORSQUE LE JOUEUR QUITTE LA TRIGGER BOX
+    public void HideFinalText()
+    {
+        HideAll();
     }
 
     void KeepFacingCorrectSide()
@@ -135,7 +133,6 @@ public class TutorialText : MonoBehaviour
 
         Vector3 scale = transform.localScale;
         scale.x = player.localScale.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-
         transform.localScale = scale;
     }
 
