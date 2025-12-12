@@ -48,7 +48,7 @@ public class DropZone : MonoBehaviour
 
     private void Update()
     {
-        if (playerInZone && Input.GetKeyDown(KeyCode.E))
+        if (playerInZone && Input.GetButtonDown("Fire1"))
         {
             if (crowd.activeFollowers.Count > 0)
             {
