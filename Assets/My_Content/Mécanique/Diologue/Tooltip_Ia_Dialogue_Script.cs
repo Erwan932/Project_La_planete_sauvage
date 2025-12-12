@@ -5,7 +5,7 @@ using TMPro;
 public class DialogueTyper : MonoBehaviour
 {
     public TextMeshProUGUI dialogueText;
-    public SpriteRenderer[] backgrounds;
+    public SpriteRenderer[] backgrounds;   // Le(s) Tooltip_Background à détruire
     public float typingSpeed = 0.03f;
     public float delayBetweenLines = 2f;
 
@@ -43,9 +43,10 @@ public class DialogueTyper : MonoBehaviour
         if (other.CompareTag("Player") && !playerInside)
         {
             playerInside = true;
-            ShowAll();
             pressedB = false;
             index = 0;
+
+            ShowAll();
 
             if (dialogueCoroutine != null)
                 StopCoroutine(dialogueCoroutine);
@@ -64,6 +65,15 @@ public class DialogueTyper : MonoBehaviour
                 StopCoroutine(dialogueCoroutine);
 
             HideAll();
+
+            // 🔥 Détruit définitivement le/les Tooltip_Background
+            foreach (var bg in backgrounds)
+            {
+                if (bg != null)
+                    Destroy(bg.gameObject);
+            }
+
+            // ⚠ La trigger NE se détruit pas → le joueur peut revenir
         }
     }
 
@@ -104,10 +114,12 @@ public class DialogueTyper : MonoBehaviour
 
     void ShowAll()
     {
-        dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 1f);
+        if (dialogueText != null)
+            dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 1f);
 
         foreach (var bg in backgrounds)
         {
+            if (bg == null) continue;
             Color c = bg.color;
             bg.color = new Color(c.r, c.g, c.b, 1f);
         }
@@ -115,18 +127,21 @@ public class DialogueTyper : MonoBehaviour
 
     void HideAll()
     {
-        dialogueText.text = "";
-
-        dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 0f);
+        if (dialogueText != null)
+        {
+            dialogueText.text = "";
+            dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 0f);
+        }
 
         foreach (var bg in backgrounds)
         {
+            if (bg == null) continue;
             Color c = bg.color;
             bg.color = new Color(c.r, c.g, c.b, 0f);
         }
     }
 
-    // 🔥 FIX pour empêcher le flip du texte
+    // 🔥 Empêche le texte de se retourner
     void LateUpdate()
     {
         Vector3 scale = transform.localScale;
