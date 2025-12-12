@@ -4,6 +4,11 @@ using TMPro;
 
 public class DropZone : MonoBehaviour
 {
+    [Header("Win Condition")]
+    public int followersNeededForWin = 1;
+    private bool winCondition = false;
+
+
     [Header("UI")]
     public GameObject playerInteractUI;
     public GameObject shipUI;
@@ -48,6 +53,7 @@ public class DropZone : MonoBehaviour
 
     private void Update()
     {
+        // Dépôt followers
         if (playerInZone && Input.GetButtonDown("Fire1"))
         {
             if (crowd.activeFollowers.Count > 0)
@@ -61,9 +67,17 @@ public class DropZone : MonoBehaviour
             }
         }
 
+        // 👉 Nouvelle partie : valider la victoire par input
+        if (winCondition && Input.GetButtonDown("Fire1"))
+        {
+            Debug.Log("Niveau Fini !");
+            // Ici tu peux lancer une animation, changer de scène, etc.
+        }
+
         if (playerInteractUI != null && playerInteractUI.activeSelf && playerTransform != null)
             playerInteractUI.transform.position = playerTransform.position + playerUIOffset;
     }
+
 
     private void DetachFollowers()
     {
@@ -88,10 +102,9 @@ public class DropZone : MonoBehaviour
 
         droppedCount++;
     }
-
-    // 👉 TU AVAIS OUBLIÉ CECI
     if (droppedCount > 0)
         ShowDepositUI(droppedCount);
+        CheckWin();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -126,12 +139,13 @@ public class DropZone : MonoBehaviour
 
     private void CheckWin()
     {
-        if (crowd.recruitableFollowers.Count == 0 &&
-            crowd.activeFollowers.Count == 0)
+        if (!winCondition && crowd.SavedFollowers.Count >= followersNeededForWin)
         {
-            Debug.Log("Niveau Fini !");
+            winCondition = true;
+            Debug.Log("Condition de victoire atteinte ! Appuie pour terminer.");
         }
     }
+
 
     // ----------------- Tween UI -----------------
     private void StartUIAppear(GameObject ui, ref Coroutine routine)
