@@ -14,6 +14,17 @@ public class FollowerAI : MonoBehaviour
     [Header("État du follower")]
     public bool IsHidden = false;
 
+    [Header("UI Recrutement")]
+    public GameObject recruitUI; // UI assignable dans l'inspecteur
+    private bool hasBeenRecruited = false; // pour empêcher la réapparition
+
+    [Header("Objet à détruire après recrutement")]
+    public GameObject objectToDestroy; // assignable dans l'inspecteur
+    [Header("Feedback Recrutement")]
+    public ParticleSystem joinParticlesPrefab; // Prefab de particules
+
+
+
     // Ajouter : état une fois déposé
     public bool isDropped = false;
 
@@ -130,6 +141,10 @@ public class FollowerAI : MonoBehaviour
                 manager.SetNearbyFollower(this);
 
             Debug.Log("Follower à proximité !");
+
+            // --- AFFICHAGE UI ---
+            if (!hasBeenRecruited && recruitUI != null)
+                recruitUI.SetActive(true);
         }
     }
 
@@ -142,6 +157,33 @@ public class FollowerAI : MonoBehaviour
                 manager.ClearNearbyFollower(this);
 
             Debug.Log("Follower hors de portée !");
+
+            // --- CACHER UI quand le joueur sort de la zone ---
+            if (!hasBeenRecruited && recruitUI != null)
+                recruitUI.SetActive(false);
+        }
+    }
+
+    // Méthode publique pour signaler le recrutement
+    public void OnRecruited()
+    {
+        hasBeenRecruited = true;
+
+        // Désactiver UI définitivement
+        if (recruitUI != null)
+            recruitUI.SetActive(false);
+
+        // Détruire l'objet assigné dans l'inspecteur
+        if (objectToDestroy != null)
+            Destroy(objectToDestroy);
+
+        if (joinParticlesPrefab != null)
+        {
+            ParticleSystem particles = Instantiate(joinParticlesPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
+            particles.Play();
+
+            // Détruire automatiquement après la durée
+            Destroy(particles.gameObject, particles.main.duration + particles.main.startLifetime.constantMax);
         }
     }
 }

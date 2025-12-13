@@ -77,7 +77,12 @@ public class CrowdManager : MonoBehaviour
             activeFollowers.Add(nearbyFollower);
 
             nearbyFollower.gameObject.SetActive(true);
+
+            nearbyFollower.OnRecruited();
             nearbyFollower = null;
+
+            if (joinParticles != null)
+            joinParticles.Play();
 
             Debug.Log("Follower recruté !");
             PlayJoinFeedback();
