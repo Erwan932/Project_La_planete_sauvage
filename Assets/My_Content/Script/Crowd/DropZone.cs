@@ -37,7 +37,7 @@ public class DropZone : MonoBehaviour
 
     // Inputs
     private const string INPUT_DEPOSIT = "Fire1";
-    private const string INPUT_FINISH = "Submit"; // ou "Fire2"
+    private const string INPUT_FINISH = "Fire3"; // ou "Fire2"
 
     private void Start()
     {
