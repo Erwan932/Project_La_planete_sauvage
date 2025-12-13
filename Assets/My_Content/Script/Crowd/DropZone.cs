@@ -6,100 +6,92 @@ public class DropZone : MonoBehaviour
 {
     [Header("Win Condition")]
     public int followersNeededForWin = 1;
-    private bool winCondition = false;
     private bool readyToFinish = false;
 
-    [Header("Win UI")]
-    public GameObject winUI;
-    private Coroutine winUIRoutine;
-
-    [Header("Missing Followers UI")]
-    public GameObject missingFollowersUI;
-    private Coroutine missingUIRoutine;
-
     [Header("UI")]
-    public GameObject playerInteractUI;
-    public GameObject shipUI;
-    private Coroutine playerUIRoutine;
-    private Coroutine shipUIRoutine;
+    public GameObject playerInteractUI;      // Tooltip pour déposer
+    public GameObject shipUI;                // UI secondaire
+    public GameObject missingFollowersUI;    // UI "followers manquants"
+    public GameObject winUI;                 // UI "appuie pour finir"
 
-    [Header("UI Deposit Feedback")]
+    [Header("Deposit Feedback UI")]
     public GameObject depositFeedbackUI;
     public TextMeshProUGUI depositCountText;
-    private bool depositUIActive = false;
 
     [Header("Tween Settings")]
     public float uiTweenSpeed = 5f;
-    public Vector3 playerUIOffset = new Vector3(0, 1.5f, 0);
-    public Vector3 shipUIOffset = new Vector3(0, 2f, 0);
 
-    private bool inputLocked = false;
     private bool playerInZone = false;
+    private bool inputLocked = false;
+
+
     private CrowdManager crowd;
     private Transform playerTransform;
+
+    private Coroutine playerUIRoutine;
+    private Coroutine shipUIRoutine;
+    private Coroutine missingUIRoutine;
+    private Coroutine winUIRoutine;
+
+    private bool depositUIActive = false;
+
+    // Inputs
+    private const string INPUT_DEPOSIT = "Fire1";
+    private const string INPUT_FINISH = "Fire3"; // ou "Fire2"
 
     private void Start()
     {
         crowd = FindFirstObjectByType<CrowdManager>();
 
-        if (playerInteractUI != null)
-        {
-            playerInteractUI.SetActive(false);
-            playerInteractUI.transform.localScale = Vector3.zero;
-        }
-
-        if (shipUI != null)
-        {
-            shipUI.SetActive(false);
-            shipUI.transform.localScale = Vector3.zero;
-        }
-
-        if (depositFeedbackUI != null)
-        {
-            depositFeedbackUI.SetActive(false);
-            depositFeedbackUI.transform.localScale = Vector3.zero;
-        }
-
-        if (winUI != null)
-        {
-            winUI.SetActive(false);
-            winUI.transform.localScale = Vector3.zero;
-        }
-
-        if (missingFollowersUI != null)
-        {
-            missingFollowersUI.SetActive(false);
-            missingFollowersUI.transform.localScale = Vector3.zero;
-        }
+        InitUI(playerInteractUI);
+        InitUI(shipUI);
+        InitUI(missingFollowersUI);
+        InitUI(winUI);
+        InitUI(depositFeedbackUI);
     }
 
     private void Update()
     {
         if (!playerInZone || inputLocked) return;
 
-        if (Input.GetButtonDown("Fire1"))
+        // ⚠️ Si un follower est recrutables à proximité → ne rien faire
+        if (crowd.nearbyFollower != null)
+            return;
+
+        // Affichage dynamique du tooltip : apparaît si le joueur a des followers, disparaît sinon
+        if (crowd.activeFollowers.Count > 0)
         {
-            // 1️⃣ PRIORITÉ : déposer les followers actifs
+            if (!playerInteractUI.activeSelf)
+                StartUIAppear(playerInteractUI, ref playerUIRoutine);
+        }
+        else
+        {
+            if (playerInteractUI.activeSelf)
+                HideDepositTooltip();
+        }
+
+        // Dépôt des followers
+        if (Input.GetButtonDown(INPUT_DEPOSIT))
+        {
             if (crowd.activeFollowers.Count > 0)
             {
                 DetachFollowers();
+                // L'UI disparaît déjà automatiquement grâce à la condition ci-dessus
                 StartCoroutine(UnlockInputDelayed());
-                return;
-            }
-
-            // 2️⃣ Si prêt à finir et aucun follower actif → finir le niveau
-            if (readyToFinish && crowd.activeFollowers.Count == 0)
-            {
-                Debug.Log("Niveau Fini !");
-                return;
             }
         }
 
-        // Maintenir la position du tooltip player
-        if (playerInteractUI != null && playerInteractUI.activeSelf && playerTransform != null)
-            playerInteractUI.transform.position = playerTransform.position + playerUIOffset;
+        // Fin du niveau
+        if (readyToFinish && Input.GetButtonDown(INPUT_FINISH))
+        {
+            Debug.Log("Niveau Fini");
+        }
     }
 
+
+    // -----------------------------
+    // DÉPÔT DES FOLLOWERS
+    // -----------------------------
     private void DetachFollowers()
     {
         int droppedCount = 0;
@@ -107,6 +99,7 @@ public class DropZone : MonoBehaviour
         for (int i = crowd.activeFollowers.Count - 1; i >= 0; i--)
         {
             FollowerAI follower = crowd.activeFollowers[i];
+
             crowd.activeFollowers.Remove(follower);
             crowd.SavedFollowers.Add(follower);
 
@@ -117,47 +110,37 @@ public class DropZone : MonoBehaviour
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
-                rb.angularVelocity = 0;
+                rb.angularVelocity = 0f;
             }
 
             droppedCount++;
         }
 
         if (droppedCount > 0)
-            ShowDepositUI();
+            ShowDepositUI(droppedCount);
 
-        CheckWin();
+        CheckWinCondition();
     }
 
-    private void CheckWin()
+    private void CheckWinCondition()
     {
-        if (!winCondition && crowd.SavedFollowers.Count >= followersNeededForWin)
+        if (crowd.SavedFollowers.Count >= followersNeededForWin)
         {
-            winCondition = true;
             readyToFinish = true;
 
-            // Si aucun follower actif → afficher message "Appuie pour terminer"
-            if (crowd.activeFollowers.Count == 0)
-            {
-                Debug.Log("Appuie pour terminer !");
-                ShowDepositUIMessage("Niveau prêt à finir !");
-            }
-
-            // Afficher Win UI
+            // Affiche l'UI de fin
             if (winUI != null && !winUI.activeSelf)
-            {
                 StartUIAppear(winUI, ref winUIRoutine);
-            }
 
-            // Masquer MissingFollowersUI si actif
+            // Masque l'UI "followers manquants"
             if (missingFollowersUI != null)
                 StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
         }
     }
 
-    private void ShowDepositUI()
+    private void ShowDepositUI(int droppedCount)
     {
-        if (depositFeedbackUI == null) return;
+        if (depositFeedbackUI == null || depositCountText == null) return;
 
         if (!depositUIActive)
         {
@@ -166,110 +149,108 @@ public class DropZone : MonoBehaviour
             depositFeedbackUI.transform.localScale = Vector3.one;
         }
 
-        if (depositCountText != null)
-            depositCountText.text = "+ " + crowd.SavedFollowers.Count + " sauvés";
+        depositCountText.text = $"+ {droppedCount} déposés";
     }
 
-    private void ShowDepositUIMessage(string message)
+    private void HideDepositTooltip()
     {
-        if (depositFeedbackUI == null) return;
+        StartUIDisappear(playerInteractUI, ref playerUIRoutine);
+    }
 
-        if (!depositUIActive)
+    // -----------------------------
+    // UI INIT & TWEENS
+    // -----------------------------
+    private void InitUI(GameObject ui)
+    {
+        if (ui == null) return;
+        ui.SetActive(false);
+        ui.transform.localScale = Vector3.zero;
+    }
+
+    private void StartUIAppear(GameObject ui, ref Coroutine routine)
+    {
+        if (ui == null) return;
+        if (routine != null) StopCoroutine(routine);
+
+        ui.SetActive(true);
+        routine = StartCoroutine(UIAppear(ui));
+    }
+
+    private void StartUIDisappear(GameObject ui, ref Coroutine routine)
+    {
+        if (ui == null) return;
+        if (routine != null) StopCoroutine(routine);
+
+        routine = StartCoroutine(UIDisappear(ui));
+    }
+
+    private IEnumerator UIAppear(GameObject ui)
+    {
+        float t = 0f;
+        ui.transform.localScale = Vector3.zero;
+
+        while (t < 1f)
         {
-            depositFeedbackUI.SetActive(true);
-            depositUIActive = true;
-            depositFeedbackUI.transform.localScale = Vector3.one;
+            t += Time.deltaTime * uiTweenSpeed;
+            ui.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, t);
+            yield return null;
         }
 
-        if (depositCountText != null)
-            depositCountText.text = message;
+        ui.transform.localScale = Vector3.one;
+    }
+
+    private IEnumerator UIDisappear(GameObject ui)
+    {
+        float t = 0f;
+        Vector3 start = ui.transform.localScale;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * uiTweenSpeed;
+            ui.transform.localScale = Vector3.Lerp(start, Vector3.zero, t);
+            yield return null;
+        }
+
+        ui.transform.localScale = Vector3.zero;
+        ui.SetActive(false);
     }
 
     private IEnumerator UnlockInputDelayed()
     {
         inputLocked = true;
-        yield return null; // attendre une frame
+        yield return null;
         inputLocked = false;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            playerInZone = true;
-            playerTransform = collision.transform;
+    // -----------------------------
+    // TRIGGERS
+    // -----------------------------
+private void OnTriggerEnter2D(Collider2D collision)
+{
+    if (!collision.CompareTag("Player")) return;
 
-            if (playerInteractUI != null)
-                StartUIAppear(playerInteractUI, ref playerUIRoutine);
+    playerInZone = true;
+    playerTransform = collision.transform;
 
-            if (shipUI != null)
-                StartUIAppear(shipUI, ref shipUIRoutine);
+    // Affiche les UI secondaires
+    StartUIAppear(shipUI, ref shipUIRoutine);
 
-            if (!winCondition && crowd.SavedFollowers.Count < followersNeededForWin && missingFollowersUI != null)
-                StartUIAppear(missingFollowersUI, ref missingUIRoutine);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            playerInZone = false;
-            playerTransform = null;
-
-            if (playerInteractUI != null)
-                StartUIDisappear(playerInteractUI, ref playerUIRoutine);
-
-            if (shipUI != null)
-                StartUIDisappear(shipUI, ref shipUIRoutine);
-
-            if (missingFollowersUI != null)
-                StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
-        }
-    }
-
-    private void StartUIAppear(GameObject ui, ref Coroutine routine)
-    {
-        if (routine != null) StopCoroutine(routine);
-        ui.SetActive(true);
-        routine = StartCoroutine(UIAppearCoroutine(ui));
-    }
-
-    private void StartUIDisappear(GameObject ui, ref Coroutine routine)
-    {
-        if (routine != null) StopCoroutine(routine);
-        routine = StartCoroutine(UIDisappearCoroutine(ui));
-    }
-
-    private IEnumerator UIAppearCoroutine(GameObject ui)
-    {
-        float t = 0f;
-        Vector3 start = Vector3.zero;
-        Vector3 end = Vector3.one;
-        ui.transform.localScale = start;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime * uiTweenSpeed;
-            ui.transform.localScale = Vector3.Lerp(start, end, t);
-            yield return null;
-        }
-        ui.transform.localScale = end;
-    }
-
-    private IEnumerator UIDisappearCoroutine(GameObject ui)
-    {
-        float t = 0f;
-        Vector3 start = ui.transform.localScale;
-        Vector3 end = Vector3.zero;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime * uiTweenSpeed;
-            ui.transform.localScale = Vector3.Lerp(start, end, t);
-            yield return null;
-        }
-        ui.transform.localScale = end;
-        ui.SetActive(false);
-    }
+    if (!readyToFinish && crowd.SavedFollowers.Count < followersNeededForWin)
+        StartUIAppear(missingFollowersUI, ref missingUIRoutine);
 }
+
+private void OnTriggerExit2D(Collider2D collision)
+{
+    if (!collision.CompareTag("Player")) return;
+
+    playerInZone = false;
+    playerTransform = null;
+
+    // Masque toutes les UI
+    StartUIDisappear(playerInteractUI, ref playerUIRoutine);
+    StartUIDisappear(shipUI, ref shipUIRoutine);
+    StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
+}
+
+}
+

@@ -1,17 +1,22 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using UnityEngine.SceneManagement;   // ← IMPORTANT pour charger une scène
+using UnityEngine.SceneManagement;
 
 public class CrowdManager : MonoBehaviour
 {
+    [Header("Followers Lists")]
     public List<FollowerAI> recruitableFollowers;
     public List<FollowerAI> activeFollowers = new List<FollowerAI>();
     public List<FollowerAI> SavedFollowers = new List<FollowerAI>();
+
+    [Header("Follower Settings")]
     public float followDistance = 0.5f;
+    public int maxFollowers = 2; // limite uniquement pour le recrutement
     public FollowerAI nearbyFollower;
+
+    [Header("Player State")]
     public bool playerIsHidden = false;
-    public int maxFollowers = 2;
 
     [Header("Feedback Recrutement")]
     public ParticleSystem joinParticles;
@@ -19,33 +24,25 @@ public class CrowdManager : MonoBehaviour
     public float followerJoinDuration = 1f;
     private Coroutine uiRoutine;
 
-    [Header("Feedback Dégâts")]
-    public GameObject damageUI;
-    public float damageUIDuration = 1f;
-    private Coroutine damageUIRoutine;
-
-    [Header("Feedback Limite Followers")]
-    public GameObject maxFollowerUI;
-    public float maxFollowerUIDuration = 1f;
-    private Coroutine maxFollowerUIRoutine;
+    [Header("Feedback Follower Perdu")]
+    public ParticleSystem lostParticles;
+    public GameObject followerLostUI;
+    public float followerLostDuration = 1f;
+    private Coroutine lostUiRoutine;
 
 
+    // -----------------------------
+    // PLAYER STATE
+    // -----------------------------
+    public void SetHidden(bool state) => playerIsHidden = state;
+    public bool IsPlayerHidden() => playerIsHidden;
 
-
-
-    public void SetHidden(bool state)
+    // -----------------------------
+    // UPDATE LOOP
+    // -----------------------------
+    private void Update()
     {
-        playerIsHidden = state;
-    }
-
-    public bool IsPlayerHidden()
-    {
-        return playerIsHidden;
-    }
-
-    void Update()
-    {
-        // Recruter le follower proche si appui sur Fire
+        // Recrutement d'un follower proche
         if (Input.GetButtonDown("Fire1"))
             TryRecruitNearbyFollower();
 
@@ -56,47 +53,51 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
     }
 
-public void TryRecruitNearbyFollower()
-{
-    if (nearbyFollower == null)
+    // -----------------------------
+    // RECRUTEMENT
+    // -----------------------------
+    public void TryRecruitNearbyFollower()
     {
-        Debug.Log("Aucun follower à proximité");
-        return;
+        if (nearbyFollower == null)
+        {
+            Debug.Log("Aucun follower à proximité");
+            return;
+        }
+
+        // Limite max uniquement pour le recrutement
+        if (activeFollowers.Count >= maxFollowers)
+        {
+            Debug.Log("Limite atteinte : " + maxFollowers + " followers maximum pour le recrutement");
+            return;
+        }
+
+        if (recruitableFollowers.Contains(nearbyFollower))
+        {
+            recruitableFollowers.Remove(nearbyFollower);
+            activeFollowers.Add(nearbyFollower);
+
+            nearbyFollower.gameObject.SetActive(true);
+            nearbyFollower = null;
+
+            Debug.Log("Follower recruté !");
+            PlayJoinFeedback();
+        }
     }
 
-    if (activeFollowers.Count >= maxFollowers)
-    {
-        Debug.Log("Limite atteinte : 2 followers maximum");
-        PlayMaxFollowerFeedback();   
-        return;
-    }
-
-    if (recruitableFollowers.Contains(nearbyFollower))
-    {
-        // Ligne tooltip supprimée
-
-        recruitableFollowers.Remove(nearbyFollower);
-        activeFollowers.Add(nearbyFollower);
-
-        nearbyFollower.gameObject.SetActive(true);
-        nearbyFollower = null;
-
-        Debug.Log("Follower recruté !");
-        PlayJoinFeedback();
-    }
-}
-
-
-
+    // -----------------------------
+    // DOMMAGES
+    // -----------------------------
     public void TakeDamage()
     {
-        PlayDamageFeedback();
-
         if (activeFollowers.Count > 0)
         {
+            // Retire le dernier follower actif
             FollowerAI lost = activeFollowers[activeFollowers.Count - 1];
             activeFollowers.RemoveAt(activeFollowers.Count - 1);
             lost.gameObject.SetActive(false);
+
+            Debug.Log("Follower perdu !");
+            PlayLostFeedback(); // Nouveau feedback visuel/particules
         }
         else
         {
@@ -105,7 +106,9 @@ public void TryRecruitNearbyFollower()
         }
     }
 
-
+    // -----------------------------
+    // POSITION DES FOLLOWERS
+    // -----------------------------
     public void UpdateFollowers()
     {
         Vector2 previousPos = transform.position;
@@ -120,7 +123,7 @@ public void TryRecruitNearbyFollower()
             Vector2 targetPos = follower.transform.position;
             if (distance > followDistance)
             {
-                targetPos = (Vector2)follower.transform.position + direction.normalized * (distance - followDistance);
+                targetPos += direction.normalized * (distance - followDistance);
             }
 
             follower.SetFormationPosition(targetPos);
@@ -128,18 +131,23 @@ public void TryRecruitNearbyFollower()
         }
     }
 
-    // Appelé depuis le FollowerAI quand le joueur entre dans le trigger
+    // -----------------------------
+    // NEARBY FOLLOWER
+    // -----------------------------
     public void SetNearbyFollower(FollowerAI follower)
     {
         nearbyFollower = follower;
     }
 
-    // Appelé depuis le FollowerAI quand le joueur sort du trigger
     public void ClearNearbyFollower(FollowerAI follower)
     {
         if (nearbyFollower == follower)
             nearbyFollower = null;
     }
+
+    // -----------------------------
+    // FEEDBACK RECRUTEMENT
+    // -----------------------------
     public void PlayJoinFeedback()
     {
         // Particules
@@ -160,8 +168,8 @@ public void TryRecruitNearbyFollower()
     {
         followerJoinUI.SetActive(true);
 
-        Vector2 startScale2D = Vector2.one * 1f; // plus petit au départ
-        Vector2 endScale2D = Vector2.one * 1f;   // taille finale réduite
+        Vector2 startScale2D = Vector2.one * 1f;
+        Vector2 endScale2D = Vector2.one * 1f;
         float t = 0f;
 
         followerJoinUI.transform.localScale = new Vector3(startScale2D.x, startScale2D.y, 1f);
@@ -175,72 +183,45 @@ public void TryRecruitNearbyFollower()
         }
 
         yield return new WaitForSeconds(followerJoinDuration);
-
         followerJoinUI.SetActive(false);
     }
-
-    public void PlayDamageFeedback()
-    {
-        if (damageUI != null)
-        {
-            if (damageUIRoutine != null)
-                StopCoroutine(damageUIRoutine);
     
-            damageUIRoutine = StartCoroutine(ShowDamageUI());
+    public void PlayLostFeedback()
+    {
+        // Particules
+        if (lostParticles != null)
+            lostParticles.Play();
+
+        // UI
+        if (followerLostUI != null)
+        {
+            if (lostUiRoutine != null)
+                StopCoroutine(lostUiRoutine);
+
+            lostUiRoutine = StartCoroutine(ShowLostUI());
         }
     }
 
-    private IEnumerator ShowDamageUI()
+    private IEnumerator ShowLostUI()
     {
-        damageUI.SetActive(true);
+        followerLostUI.SetActive(true);
 
-        Vector2 start = Vector2.one * 0.8f;
-        Vector2 end = Vector2.one * 1f;
+        Vector2 startScale2D = Vector2.one * 1f;
+        Vector2 endScale2D = Vector2.one * 1f;
         float t = 0f;
 
-        damageUI.transform.localScale = start;
+        followerLostUI.transform.localScale = new Vector3(startScale2D.x, startScale2D.y, 1f);
 
         while (t < 1f)
         {
             t += Time.deltaTime * 4f;
-            damageUI.transform.localScale = Vector2.Lerp(start, end, t);
+            Vector2 currentScale2D = Vector2.Lerp(startScale2D, endScale2D, t);
+            followerLostUI.transform.localScale = new Vector3(currentScale2D.x, currentScale2D.y, 1f);
             yield return null;
         }
 
-        yield return new WaitForSeconds(damageUIDuration);
-
-        damageUI.SetActive(false);
-    }
-    public void PlayMaxFollowerFeedback()
-    {
-        if (maxFollowerUI != null)
-        {
-            if (maxFollowerUIRoutine != null)
-                StopCoroutine(maxFollowerUIRoutine);
-
-            maxFollowerUIRoutine = StartCoroutine(ShowMaxFollowerUI());
-        }
+        yield return new WaitForSeconds(followerLostDuration);
+        followerLostUI.SetActive(false);
     }
 
-    private IEnumerator ShowMaxFollowerUI()
-    {
-        maxFollowerUI.SetActive(true);
-
-        Vector2 start = Vector2.one * 0.8f;
-        Vector2 end = Vector2.one * 1f;
-        float t = 0f;
-
-        maxFollowerUI.transform.localScale = start;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime * 4f;
-            maxFollowerUI.transform.localScale = Vector2.Lerp(start, end, t);
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(maxFollowerUIDuration);
-
-        maxFollowerUI.SetActive(false);
-    }
 }
