@@ -27,21 +27,23 @@ public class DialogueTyper : MonoBehaviour
     void Start()
     {
         HideAll();
+
         if (!CheckpointData.savedStates.ContainsKey(nameID))
             CheckpointData.savedStates.Add(nameID, false);
 
-        linesToUse = defaultLines; // On initialise avec les lignes par défaut
+        linesToUse = defaultLines;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player") || (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID]))
+        if (!other.CompareTag("Player") ||
+            (CheckpointData.savedStates.ContainsKey(nameID) && CheckpointData.savedStates[nameID]))
             return;
 
         playerInside = true;
         index = 0;
 
-        // Si un texte spécifique est défini, on l'utilise
+        // Choix du texte
         if (!string.IsNullOrEmpty(triggerText))
             linesToUse = new string[] { triggerText };
         else
@@ -67,7 +69,7 @@ public class DialogueTyper : MonoBehaviour
 
         HideAll();
 
-        // Détruit définitivement le/les backgrounds
+        // Détruit définitivement les backgrounds
         foreach (var bg in backgrounds)
         {
             if (bg != null)
@@ -95,6 +97,7 @@ public class DialogueTyper : MonoBehaviour
         foreach (char letter in line)
         {
             if (!playerInside) yield break;
+
             dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed);
         }
@@ -103,11 +106,17 @@ public class DialogueTyper : MonoBehaviour
     void ShowAll()
     {
         if (dialogueText != null)
-            dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 1f);
+            dialogueText.color = new Color(
+                dialogueText.color.r,
+                dialogueText.color.g,
+                dialogueText.color.b,
+                1f
+            );
 
         foreach (var bg in backgrounds)
         {
             if (bg == null) continue;
+
             Color c = bg.color;
             bg.color = new Color(c.r, c.g, c.b, 1f);
         }
@@ -118,24 +127,35 @@ public class DialogueTyper : MonoBehaviour
         if (dialogueText != null)
         {
             dialogueText.text = "";
-            dialogueText.color = new Color(dialogueText.color.r, dialogueText.color.g, dialogueText.color.b, 0f);
+            dialogueText.color = new Color(
+                dialogueText.color.r,
+                dialogueText.color.g,
+                dialogueText.color.b,
+                0f
+            );
         }
 
         foreach (var bg in backgrounds)
         {
             if (bg == null) continue;
+
             Color c = bg.color;
             bg.color = new Color(c.r, c.g, c.b, 0f);
         }
     }
 
-    // Empêche le texte de se retourner
+    // 🔁 Corrige le flip pour que le texte reste toujours lisible
     void LateUpdate()
     {
-        Vector3 scale = transform.localScale;
-        if (scale.x < 0)
-            scale.x = Mathf.Abs(scale.x);
+        if (transform.parent == null) return;
 
-        transform.localScale = scale;
+        float parentScaleX = transform.parent.localScale.x;
+
+        Vector3 localScale = transform.localScale;
+        localScale.x = parentScaleX < 0
+            ? -Mathf.Abs(localScale.x)
+            : Mathf.Abs(localScale.x);
+
+        transform.localScale = localScale;
     }
 }
