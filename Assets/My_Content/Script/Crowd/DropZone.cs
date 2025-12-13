@@ -50,93 +50,91 @@ public class DropZone : MonoBehaviour
         InitUI(depositFeedbackUI);
     }
 
-    private void Update()
+private void Update()
+{
+    if (!playerInZone || inputLocked) return;
+
+    // --- UI de recrutement seulement ---
+    if (crowd.nearbyFollower != null)
     {
-        if (!playerInZone || inputLocked) return;
-
-        // ⚠️ Si un follower est recrutables à proximité → ne rien faire
-        if (crowd.nearbyFollower != null)
-            return;
-
-        // Affichage dynamique du tooltip : apparaît si le joueur a des followers, disparaît sinon
-        if (crowd.activeFollowers.Count > 0)
-        {
-            if (!playerInteractUI.activeSelf)
-                StartUIAppear(playerInteractUI, ref playerUIRoutine);
-        }
-        else
-        {
-            if (playerInteractUI.activeSelf)
-                HideDepositTooltip();
-        }
-
-        // Dépôt des followers
-        if (Input.GetButtonDown(INPUT_DEPOSIT))
-        {
-            if (crowd.activeFollowers.Count > 0)
-            {
-                DetachFollowers();
-                // L'UI disparaît déjà automatiquement grâce à la condition ci-dessus
-                StartCoroutine(UnlockInputDelayed());
-            }
-        }
-
-        // Fin du niveau
-        if (readyToFinish && Input.GetButtonDown(INPUT_FINISH))
-        {
-            Debug.Log("Niveau Fini");
-        }
+        // Ici tu peux afficher un tooltip pour le recrutement, mais ne bloque pas le dépôt
+        if (!playerInteractUI.activeSelf)
+            StartUIAppear(playerInteractUI, ref playerUIRoutine);
     }
 
-
-    // -----------------------------
-    // DÉPÔT DES FOLLOWERS
-    // -----------------------------
-    private void DetachFollowers()
+    // --- Affichage dynamique du tooltip pour les followers actifs ---
+    if (crowd.activeFollowers.Count > 0)
     {
-        int droppedCount = 0;
-
-        for (int i = crowd.activeFollowers.Count - 1; i >= 0; i--)
-        {
-            FollowerAI follower = crowd.activeFollowers[i];
-
-            crowd.activeFollowers.Remove(follower);
-            crowd.SavedFollowers.Add(follower);
-
-            follower.StopFollowing();
-            follower.targetPosition = follower.transform.position;
-
-            Rigidbody2D rb = follower.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = Vector2.zero;
-                rb.angularVelocity = 0f;
-            }
-
-            droppedCount++;
-        }
-
-        if (droppedCount > 0)
-            ShowDepositUI(droppedCount);
-
-        CheckWinCondition();
+        if (!playerInteractUI.activeSelf)
+            StartUIAppear(playerInteractUI, ref playerUIRoutine);
+    }
+    else
+    {
+        if (playerInteractUI.activeSelf)
+            HideDepositTooltip();
     }
 
-    private void CheckWinCondition()
+    // --- Dépôt des followers ---
+    if (Input.GetButtonDown(INPUT_DEPOSIT) && crowd.activeFollowers.Count > 0)
     {
-        if (crowd.SavedFollowers.Count >= followersNeededForWin)
-        {
-            readyToFinish = true;
-
-            // Affiche l'UI de fin
-            if (winUI != null && !winUI.activeSelf)
-                StartUIAppear(winUI, ref winUIRoutine);
-
-            // Masque l'UI "followers manquants"
-            if (missingFollowersUI != null)
-                StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
-        }
+        DetachFollowers();
+        StartCoroutine(UnlockInputDelayed());
     }
+
+    // --- Fin du niveau ---
+    if (readyToFinish && Input.GetButtonDown(INPUT_FINISH))
+    {
+        Debug.Log("Niveau Fini");
+    }
+}
+
+private void DetachFollowers()
+{
+    int droppedCount = 0;
+
+    for (int i = crowd.activeFollowers.Count - 1; i >= 0; i--)
+    {
+        FollowerAI follower = crowd.activeFollowers[i];
+
+        crowd.activeFollowers.Remove(follower);
+        crowd.SavedFollowers.Add(follower);
+
+        follower.StopFollowing();
+        follower.targetPosition = follower.transform.position;
+
+        Rigidbody2D rb = follower.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
+        droppedCount++;
+    }
+
+    if (droppedCount > 0)
+        ShowDepositUI(droppedCount);
+
+    // Vérifie toujours la condition de victoire
+    CheckWinCondition();
+}
+
+private void CheckWinCondition()
+{
+    if (crowd.SavedFollowers.Count >= followersNeededForWin)
+    {
+        readyToFinish = true;
+
+        // Affiche toujours le message de victoire, même si winUI était déjà actif
+        if (winUI != null)
+            StartUIAppear(winUI, ref winUIRoutine);
+
+        // Masque l'UI des followers manquants
+        if (missingFollowersUI != null)
+            StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
+    }
+}
+
 
     private void ShowDepositUI(int droppedCount)
     {
