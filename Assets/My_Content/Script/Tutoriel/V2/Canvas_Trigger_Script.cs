@@ -1,16 +1,29 @@
 using UnityEngine;
 
-public class Canvas_Trigger_Script : MonoBehaviour
+public class CanvasDialogueTrigger : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Dialogue")]
+    [TextArea(2, 5)]
+    public string[] dialogueLines;
 
-    // Update is called once per frame
-    void Update()
+    [Header("Références")]
+    public DialogueBox dialogueBox;
+    public Sprite imageToShow;
+
+    [Header("Options")]
+    public bool playOnlyOnce = true;
+
+    private bool hasPlayed;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (playOnlyOnce && hasPlayed)
+            return;
+
+        dialogueBox.StartDialogue(dialogueLines, imageToShow);
+        hasPlayed = true;
     }
 }

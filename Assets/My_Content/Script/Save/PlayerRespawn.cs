@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerRespawn : MonoBehaviour
 {
+    [Header("Respawn")]
     private Vector3 spawnPosition;
 
-    private RespawnableObject[] respawnObjects;
+    [Header("Canvas Fade")]
+    public GameObject deathCanvas;
+    public CanvasFade canvasFade;
 
-    private void Awake()
-    {
-        // On récupère tous les objets respawnables de la scène
-        respawnObjects = FindObjectsOfType<RespawnableObject>();
-    }
+    [Header("Player")]
+    public MonoBehaviour playerMovementScript;
+
+    [Header("Crowd")]
+    public CrowdManager crowdManager;
+
+    [Header("DetectionZones")]
+    public List<DetectionZone> detectionZones; // Tous les triggers à désactiver
+
+    private bool isRespawning;
 
     private void Start()
     {
@@ -26,6 +35,9 @@ public class PlayerRespawn : MonoBehaviour
             CheckpointData.savedPosition = spawnPosition;
             CheckpointData.hasSavedPosition = true;
         }
+
+        if (deathCanvas != null)
+            deathCanvas.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -33,24 +45,94 @@ public class PlayerRespawn : MonoBehaviour
         if (other.CompareTag("Checkpoint"))
         {
             spawnPosition = other.transform.position;
-
             CheckpointData.savedPosition = spawnPosition;
             CheckpointData.hasSavedPosition = true;
-
-            Debug.Log("Checkpoint activé : " + spawnPosition);
         }
 
-        if (other.CompareTag("Trap"))
+        if (other.CompareTag("Trap") && !isRespawning)
         {
-            DieAndRespawn();
+            StartCoroutine(DeathSequence());
         }
     }
 
-    private void DieAndRespawn()
+    // -----------------------------
+    // DEATH / RESPAWN SEQUENCE
+    // -----------------------------
+    private IEnumerator DeathSequence()
     {
-        Debug.Log("Respawn sans reload !");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        // 1️⃣ Respawn du joueur
+        isRespawning = true;
 
+        // ⛔ Bloquer les inputs joueur
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = false;
+
+        // 🟥 Activer le canvas
+        if (deathCanvas != null)
+            deathCanvas.SetActive(true);
+
+        // 🔴 Fade IN
+        if (canvasFade != null)
+            yield return StartCoroutine(canvasFade.FadeIn());
+
+        // 🚫 Désactiver toutes les DetectionZones
+        foreach (var dz in detectionZones)
+        {
+            if (dz != null)
+                dz.detectionEnabled = false;
+        }
+
+        // 🔁 Respawn caché
+        transform.position = spawnPosition;
+
+        // 👥 Reset complet des followers
+        ResetFollowers();
+
+        // 🟢 Petite pause optionnelle
+        yield return new WaitForSeconds(0.2f);
+
+        // 🟩 Fade OUT
+        if (canvasFade != null)
+            yield return StartCoroutine(canvasFade.FadeOut());
+
+        // 🟦 Désactiver le canvas
+        if (deathCanvas != null)
+            deathCanvas.SetActive(false);
+
+        // ✅ Réactiver les DetectionZones
+        foreach (var dz in detectionZones)
+        {
+            if (dz != null)
+            {
+                dz.detectionEnabled = true;
+                dz.scanInProgress = false;
+                if (dz.redOverlay != null)
+                    dz.redOverlay.gameObject.SetActive(false);
+            }
+        }
+
+        // ✅ Rendre les inputs joueur
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = true;
+
+        isRespawning = false;
+    }
+
+    // -----------------------------
+    // RESET FOLLOWERS (sans toucher CrowdManager)
+    // -----------------------------
+    private void ResetFollowers()
+    {
+        if (crowdManager == null)
+            return;
+
+        // Désactiver tous les followers actifs
+        foreach (FollowerAI follower in crowdManager.activeFollowers)
+        {
+            if (follower != null)
+                follower.gameObject.SetActive(false);
+        }
+
+        // Vider la liste
+        crowdManager.activeFollowers.Clear();
     }
 }

@@ -1,42 +1,37 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class DialogueBox : MonoBehaviour
 {
     [Header("UI Références")]
-    public GameObject canvasDialogue;          // Le Canvas principal
-    public Image backgroundImage;               // Background du dialogue
-    public Image characterImage;                // Image (portrait, icône, etc.)
-    public TextMeshProUGUI dialogueText;         // Texte du dialogue
+    public GameObject canvasDialogue;
+    public Image backgroundImage;
+    public Image characterImage;
+    public TextMeshProUGUI dialogueText;
 
     [Header("Réglages")]
-    public KeyCode skipKey = KeyCode.B;
+    public float timeBetweenLines = 2f;
+
+    [Header("Player Input")]
+    public MonoBehaviour playerMovementScript;
 
     private string[] currentLines;
     private int currentIndex;
     private bool dialogueActive;
+    private Coroutine dialogueCoroutine;
 
     private void Start()
     {
-        canvasDialogue.SetActive(false);
+        if (canvasDialogue != null)
+            canvasDialogue.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (!dialogueActive)
-            return;
-
-        if (Input.GetKeyDown(skipKey))
-        {
-            NextLine();
-        }
-    }
-
-    // 🔹 Lancer un dialogue depuis une trigger
+    // 🔹 Lancer un dialogue
     public void StartDialogue(string[] lines, Sprite image = null)
     {
-        if (lines == null || lines.Length == 0)
+        if (dialogueActive)
             return;
 
         currentLines = lines;
@@ -51,9 +46,23 @@ public class DialogueBox : MonoBehaviour
             characterImage.gameObject.SetActive(image != null);
             characterImage.sprite = image;
         }
+
+        // ⛔ Bloquer les inputs joueur
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = false;
+
+        dialogueCoroutine = StartCoroutine(AutoDialogue());
     }
 
-    // 🔹 Passer à la ligne suivante
+    private IEnumerator AutoDialogue()
+    {
+        while (dialogueActive)
+        {
+            yield return new WaitForSeconds(timeBetweenLines);
+            NextLine();
+        }
+    }
+
     private void NextLine()
     {
         currentIndex++;
@@ -68,11 +77,19 @@ public class DialogueBox : MonoBehaviour
         }
     }
 
-    // 🔹 Fermer le dialogue
+    // 🔹 Fin du dialogue
     private void EndDialogue()
     {
         dialogueActive = false;
+
+        if (dialogueCoroutine != null)
+            StopCoroutine(dialogueCoroutine);
+
         canvasDialogue.SetActive(false);
         dialogueText.text = "";
+
+        // ✅ Rendre les inputs joueur
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = true;
     }
 }

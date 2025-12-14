@@ -21,7 +21,7 @@ public class MenuMortController : MonoBehaviour
 
         // Branche les clics des boutons
         boutonStart.onClick.AddListener(OnStartClick);
-        boutonMenu.onClick.AddListener(LoadMenu);
+        boutonMenu.onClick.AddListener(OnReloadMap); // Reload Map_Test_V3 et respawn
         boutonQuit.onClick.AddListener(OnQuitClick);
     }
 
@@ -46,9 +46,29 @@ public class MenuMortController : MonoBehaviour
         SceneManager.LoadScene("Menu_Principal");
     }
 
-    public void LoadMenu()
+    // -----------------------------
+    // RELOAD MAP & ONPLAYERRESPAWN
+    // -----------------------------
+    public void OnReloadMap()
     {
+        // Charger la scène Map_Test_V3
         SceneManager.LoadScene("Map_Test_V3");
+
+        // Après le chargement de la scène, appeler OnPlayerRespawn
+        StartCoroutine(CallRespawnAfterSceneLoad());
+    }
+
+    private IEnumerator CallRespawnAfterSceneLoad()
+    {
+        // Attendre la fin du frame pour que la scène soit complètement chargée
+        yield return new WaitForEndOfFrame();
+
+        // Trouver le CrowdManager dans la nouvelle scène (version moderne sans warning)
+        CrowdManager cm = Object.FindFirstObjectByType<CrowdManager>();
+        if (cm != null)
+        {
+            cm.OnPlayerRespawn();
+        }
     }
 
     public void OnQuitClick()
