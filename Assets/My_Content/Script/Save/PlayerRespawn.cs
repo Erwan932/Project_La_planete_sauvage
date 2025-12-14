@@ -58,7 +58,7 @@ public class PlayerRespawn : MonoBehaviour
     // -----------------------------
     // DEATH / RESPAWN SEQUENCE
     // -----------------------------
-    private IEnumerator DeathSequence()
+    public IEnumerator DeathSequence()
     {
         isRespawning = true;
 

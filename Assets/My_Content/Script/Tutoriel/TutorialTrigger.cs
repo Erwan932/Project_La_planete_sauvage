@@ -1,23 +1,20 @@
 using UnityEngine;
 
-public class TutorialTriggerBox2 : MonoBehaviour
+public class TutorialTrigger : MonoBehaviour
 {
-    public TutorialText tutorial;
-    public string playerTag = "Player";
+    public TutorialText tutorialText;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(playerTag))
-        {
-            tutorial.ShowFinalText();
-        }
+        if (!other.CompareTag("Player")) return;
+
+        tutorialText.ShowSecondText();
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag(playerTag))
-        {
-            tutorial.HideFinalText();
-        }
+        if (!other.CompareTag("Player")) return;
+
+        tutorialText.HideText();
     }
 }

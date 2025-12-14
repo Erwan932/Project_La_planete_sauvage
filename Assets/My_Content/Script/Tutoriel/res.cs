@@ -1,18 +1,19 @@
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using System.Collections;
-using System;
 
 public class CanvasFade : MonoBehaviour
 {
-    public Image fadeImage;
+    [Header("Canvas Group cible")]
+    public CanvasGroup canvasGroup;   // Contrôle l’opacité du Canvas entier
+
+    [Header("Durées")]
     public float fadeDuration = 1.5f;
     public float blackScreenHoldTime = 2f;
 
     private void Awake()
     {
-        if (fadeImage == null)
-            fadeImage = GetComponent<Image>();
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
     }
 
     public IEnumerator FadeIn()
@@ -29,26 +30,19 @@ public class CanvasFade : MonoBehaviour
     private IEnumerator Fade(float startAlpha, float endAlpha)
     {
         float time = 0f;
-        Color c = fadeImage.color;
 
         while (time < fadeDuration)
         {
             time += Time.deltaTime;
             float alpha = Mathf.Lerp(startAlpha, endAlpha, time / fadeDuration);
-            fadeImage.color = new Color(c.r, c.g, c.b, alpha);
+            canvasGroup.alpha = alpha;
             yield return null;
         }
 
-        fadeImage.color = new Color(c.r, c.g, c.b, endAlpha);
-    }
+        canvasGroup.alpha = endAlpha;
 
-    internal string FadeInRealtime()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal string FadeOutRealtime()
-    {
-        throw new NotImplementedException();
+        // Si alpha = 0 → désactiver le Canvas pour ne plus bloquer les clics
+        if (endAlpha == 0f)
+            gameObject.SetActive(false);
     }
 }

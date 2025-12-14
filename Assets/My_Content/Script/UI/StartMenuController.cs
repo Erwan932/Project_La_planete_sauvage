@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,7 +9,7 @@ public class StartMenuController : MonoBehaviour
 
     void Start()
     {
-        // Sélectionne le bouton Start au début
+        // SÃ©lectionne le bouton Start au dÃ©but
         EventSystem.current.SetSelectedGameObject(startButton.gameObject);
     }
 

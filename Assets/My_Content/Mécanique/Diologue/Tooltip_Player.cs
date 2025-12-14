@@ -3,7 +3,7 @@ using TMPro;
 
 public class TutorialText : MonoBehaviour
 {
-    [Header("Références")]
+    [Header("Références UI")]
     public TextMeshProUGUI dialogueText;
     public SpriteRenderer[] backgrounds;
 
@@ -13,54 +13,39 @@ public class TutorialText : MonoBehaviour
 
     [Header("Textes du tutoriel")]
     [TextArea(2, 3)]
-    public string[] tutorialLines;   // 0 = texte 1, 1 = texte 2
+    public string[] tutorialLines; // 0 = texte 1 / 1 = texte 2
 
-    [Header("UI Supplémentaire")]
-    public GameObject extraImage;
-    public int imageAppearsAtIndex = 1;
+    [Header("Images")]
+    public GameObject firstImage;   // image du texte 1
+    public GameObject secondImage;  // image du texte 2
 
-    private int currentIndex = 0;
-    private bool tutorialStarted = false;
-    private bool hasMoved = false;
-    private bool hasJumped = false;
-
-    // 🔥 Empêche le texte 2 de rejouer une 2e fois
-    private bool finalTextAlreadyPlayed = false;
+    private bool firstTextActive = true;
 
     void Start()
     {
         dialogueText.text = "";
         HideAll();
 
-        if (extraImage != null)
-            extraImage.SetActive(false);
-        if (!CheckpointData.savedStates.ContainsKey("title"))
-            CheckpointData.savedStates.Add("title", true);
+        ShowFirstText();
     }
 
     void Update()
     {
-        if (CheckpointData.savedStates.ContainsKey("title") && CheckpointData.savedStates["title"] == true)
-           return;
-        if (!tutorialStarted)
-        {
-            StartTutorial();
-            return;
-        }
-
+        FollowPlayer();
         KeepFacingCorrectSide();
 
-        // 🔥 SEULEMENT POUR LE TEXTE 1
-        if (currentIndex == 0)
+        // 🔥 Supprimer le TEXTE 1 quand le joueur bouge
+        if (firstTextActive)
         {
-            HandleMovementTutorial();
-            HandleJumpTutorial();
-        }
-    }
+            float mx = Input.GetAxis("Horizontal");
+            float my = Input.GetAxis("Vertical");
 
-    void LateUpdate()
-    {
-        FollowPlayer();
+            if (Mathf.Abs(mx) > 0.2f || Mathf.Abs(my) > 0.2f)
+            {
+                firstTextActive = false;
+                HideAll();
+            }
+        }
     }
 
     void FollowPlayer()
@@ -69,67 +54,54 @@ public class TutorialText : MonoBehaviour
         transform.position = player.position + offset;
     }
 
-    void StartTutorial()
+    // =============================
+    // AFFICHAGE DES TEXTES
+    // =============================
+
+    void ShowFirstText()
     {
-        tutorialStarted = true;
-        currentIndex = 0;
-        ShowLine(currentIndex);
+        ShowLine(0);
+        ShowFirstImage();
+    }
+
+    public void ShowSecondText()
+    {
+        ShowLine(1);
+        ShowSecondImage();
+    }
+
+    public void HideText()
+    {
+        HideAll();
     }
 
     void ShowLine(int index)
     {
-        if (index >= tutorialLines.Length)
-        {
-            HideAll();
-            return;
-        }
+        if (index >= tutorialLines.Length) return;
 
         ShowAll();
         dialogueText.text = tutorialLines[index];
-
-        if (extraImage != null)
-            extraImage.SetActive(index == imageAppearsAtIndex);
     }
 
-    // 🔥 TEXTE 1 : mouvement
-    void HandleMovementTutorial()
+    // =============================
+    // GESTION DES IMAGES
+    // =============================
+
+    void ShowFirstImage()
     {
-        float mx = Input.GetAxis("Horizontal");
-        float my = Input.GetAxis("Vertical");
-
-        if (!hasMoved && (Mathf.Abs(mx) > 0.2f || Mathf.Abs(my) > 0.2f))
-        {
-            hasMoved = true;
-            HideAll();
-        }
+        if (firstImage != null) firstImage.SetActive(true);
+        if (secondImage != null) secondImage.SetActive(false);
     }
 
-    // 🔥 TEXTE 1 : saut
-    void HandleJumpTutorial()
+    void ShowSecondImage()
     {
-        if (!hasJumped && Input.GetButtonDown("Jump"))
-        {
-            hasJumped = true;
-            HideAll();
-        }
+        if (firstImage != null) firstImage.SetActive(false);
+        if (secondImage != null) secondImage.SetActive(true);
     }
 
-    // 🔥 APPELÉ PAR LA DEUXIÈME TRIGGER BOX
-    public void ShowFinalText()
-    {
-        if (finalTextAlreadyPlayed)
-            return; // ❌ ne plus jamais rejouer
-
-        finalTextAlreadyPlayed = true;
-        currentIndex = 1; // texte 2
-        ShowLine(currentIndex);
-    }
-
-    // 🔥 APPELÉ LORSQUE LE JOUEUR QUITTE LA TRIGGER BOX
-    public void HideFinalText()
-    {
-        HideAll();
-    }
+    // =============================
+    // ORIENTATION & VISIBILITÉ
+    // =============================
 
     void KeepFacingCorrectSide()
     {
@@ -161,7 +133,7 @@ public class TutorialText : MonoBehaviour
             bg.color = new Color(c.r, c.g, c.b, 0f);
         }
 
-        if (extraImage != null)
-            extraImage.SetActive(false);
+        if (firstImage != null) firstImage.SetActive(false);
+        if (secondImage != null) secondImage.SetActive(false);
     }
 }
