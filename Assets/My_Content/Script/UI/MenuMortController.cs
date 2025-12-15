@@ -35,7 +35,7 @@ public class MenuMortController : MonoBehaviour
         CrowdManager cm = Object.FindFirstObjectByType<CrowdManager>();
         if (cm != null)
         {
-            cm.OnPlayerRespawn();
+           // cm.OnPlayerRespawn();
         }
     }
 

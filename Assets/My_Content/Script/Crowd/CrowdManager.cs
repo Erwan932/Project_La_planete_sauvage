@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class CrowdManager : MonoBehaviour
 {
@@ -30,10 +29,8 @@ public class CrowdManager : MonoBehaviour
     public float followerLostDuration = 1f;
     private Coroutine lostUiRoutine;
 
-    [Header("Respawn Canvas")]
-    public GameObject respawnCanvas; // Canvas qui s'active à la réapparition
-    public float respawnFadeDuration = 1f; // Durée du fade-in
-    private Coroutine respawnRoutine;
+    [Header("Respawn Player")]
+    public PlayerRespawn playerRespawn; // assigner dans l’inspecteur
 
     // -----------------------------
     // PLAYER STATE
@@ -110,8 +107,17 @@ public class CrowdManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("GAME OVER");
-            SceneManager.LoadScene("Menu_Mort");
+            Debug.Log("PLAYER DEATH - Respawn sequence");
+
+            // Au lieu de Game Over, on appelle la séquence de respawn
+            if (playerRespawn != null && !playerRespawn.IsRespawning) // IsRespawning doit être public dans PlayerRespawn
+            {
+                playerRespawn.StartCoroutine(playerRespawn.DeathSequence());
+            }
+            else
+            {
+                Debug.LogWarning("PlayerRespawn non assigné ou déjà en respawn !");
+            }
         }
     }
 
@@ -234,42 +240,5 @@ public class CrowdManager : MonoBehaviour
 
         yield return new WaitForSeconds(followerLostDuration);
         followerLostUI.SetActive(false);
-    }
-
-    // -----------------------------
-    // RESPWAN CANVAS
-    // -----------------------------
-    public void OnPlayerRespawn()
-    {
-        if (respawnCanvas != null)
-        {
-            if (respawnRoutine != null)
-                StopCoroutine(respawnRoutine);
-
-            respawnRoutine = StartCoroutine(ShowRespawnCanvas());
-        }
-    }
-
-    private IEnumerator ShowRespawnCanvas()
-    {
-        respawnCanvas.SetActive(true);
-
-        CanvasGroup canvasGroup = respawnCanvas.GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-            canvasGroup = respawnCanvas.AddComponent<CanvasGroup>();
-
-        canvasGroup.alpha = 0f;
-        float t = 0f;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime / respawnFadeDuration;
-            canvasGroup.alpha = Mathf.Lerp(0f, 1f, t);
-            yield return null;
-        }
-
-        // Tu peux garder le canvas visible ou le masquer après un délai si nécessaire
-        yield return new WaitForSeconds(2f);
-        canvasGroup.alpha = 1f;
     }
 }

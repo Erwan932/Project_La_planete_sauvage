@@ -20,7 +20,8 @@ public class PlayerRespawn : MonoBehaviour
     [Header("DetectionZones")]
     public List<DetectionZone> detectionZones; // Tous les triggers à désactiver
 
-    private bool isRespawning;
+    public bool isRespawning;
+    public bool IsRespawning => isRespawning;
 
     private void Start()
     {
