@@ -142,12 +142,12 @@ TextureImporter:
       name: Idle_Anim_Hero2_0
       rect:
         serializedVersion: 2
-        x: 80
-        y: 11
-        width: 188
-        height: 468
+        x: 0
+        y: 0
+        width: 300
+        height: 500
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a2a8e22e5724f3647a5ce44fa13d2092
     internalID: 0
     vertices: []
     indices: 
