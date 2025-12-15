@@ -30,6 +30,10 @@ public class CrowdManager : MonoBehaviour
     public float followerLostDuration = 1f;
     private Coroutine lostUiRoutine;
 
+    [Header("Feedback Max Followers")]
+    public GameObject maxFollowersUI;
+    private bool maxFollowersUIShown = false;
+
     [Header("Respawn Player")]
     public PlayerRespawn playerRespawn;
 
@@ -51,6 +55,8 @@ public class CrowdManager : MonoBehaviour
             TakeDamage();
 
         UpdateFollowers();
+        CheckMaxFollowersUI();
+
     }
 
     // -----------------------------
@@ -71,6 +77,7 @@ public class CrowdManager : MonoBehaviour
             nearbyFollower = null;
 
             PlayJoinFeedback();
+            CheckMaxFollowersUI();
         }
     }
 
@@ -114,6 +121,8 @@ public class CrowdManager : MonoBehaviour
         }
 
         CheckGameOverCondition();
+        CheckMaxFollowersUI();
+
     }
 
     // -----------------------------
@@ -206,4 +215,28 @@ public class CrowdManager : MonoBehaviour
         yield return new WaitForSeconds(followerLostDuration);
         followerLostUI.SetActive(false);
     }
+
+    // -----------------------------
+    // UI MAX FOLLOWERS
+    // -----------------------------
+    private void CheckMaxFollowersUI()
+    {
+        if (activeFollowers.Count >= maxFollowers)
+        {
+            if (!maxFollowersUIShown)
+            {
+                maxFollowersUI.SetActive(true);
+                maxFollowersUIShown = true;
+            }
+        }
+        else
+        {
+            if (maxFollowersUIShown)
+            {
+                maxFollowersUI.SetActive(false);
+                maxFollowersUIShown = false;
+            }
+        }
+    }
+
 }
