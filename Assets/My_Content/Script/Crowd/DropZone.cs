@@ -228,6 +228,8 @@ public class DropZone : MonoBehaviour
 
         if (!readyToFinish)
             StartUIAppear(missingFollowersUI, ref missingUIRoutine);
+        else
+            StartUIAppear(winUI, ref winUIRoutine); // Si victoire déjà prête, afficher WinUI
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -240,6 +242,9 @@ public class DropZone : MonoBehaviour
         StartUIDisappear(playerInteractUI, ref playerUIRoutine);
         StartUIDisappear(shipUI, ref shipUIRoutine);
         StartUIDisappear(missingFollowersUI, ref missingUIRoutine);
-        StartUIDisappear(winUI, ref winUIRoutine);
+
+        // NE PAS cacher le WinUI si la condition de victoire est remplie
+        if (!readyToFinish)
+            StartUIDisappear(winUI, ref winUIRoutine);
     }
 }
