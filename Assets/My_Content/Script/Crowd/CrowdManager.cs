@@ -37,6 +37,9 @@ public class CrowdManager : MonoBehaviour
     [Header("Respawn Player")]
     public PlayerRespawn playerRespawn;
 
+    // Flag pour éviter de lancer plusieurs coroutines en même temps
+    private bool checkingGameOver = false;
+
     // -----------------------------
     // PLAYER STATE
     // -----------------------------
@@ -57,6 +60,7 @@ public class CrowdManager : MonoBehaviour
         UpdateFollowers();
         CheckMaxFollowersUI();
 
+        CheckGameOverCondition();
     }
 
     // -----------------------------
@@ -97,6 +101,11 @@ public class CrowdManager : MonoBehaviour
 
             Destroy(follower.gameObject);
 
+            if (recruitableFollowers.Count == 3)
+            {
+                Debug.Log("Dernière chance");
+            }
+
             CheckGameOverCondition();
         }
     }
@@ -122,7 +131,6 @@ public class CrowdManager : MonoBehaviour
 
         CheckGameOverCondition();
         CheckMaxFollowersUI();
-
     }
 
     // -----------------------------
@@ -130,14 +138,31 @@ public class CrowdManager : MonoBehaviour
     // -----------------------------
     private void CheckGameOverCondition()
     {
-        if (activeFollowers.Count == 0 && recruitableFollowers.Count == 2)
+        // Condition : moins de 2 recrutable ET aucun actif
+        if (activeFollowers.Count == 0 && recruitableFollowers.Count < 3)
         {
-            Debug.Log("Condition de mort atteinte → Reload map");
+            if (!checkingGameOver)
+            {
+                checkingGameOver = true;
+                StartCoroutine(GameOverDelay());
+            }
+        }
+    }
 
-            // Recharge la scène actuelle
+    private IEnumerator GameOverDelay()
+    {
+        yield return new WaitForSeconds(2f);
+
+        // Vérifie encore la condition après 2 secondes
+        if (activeFollowers.Count == 0 && recruitableFollowers.Count < 3)
+        {
+            Debug.Log("Condition de mort atteinte → Reload map après 2 secondes");
+
             Scene currentScene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(currentScene.name);
         }
+
+        checkingGameOver = false;
     }
 
     // -----------------------------
@@ -238,5 +263,4 @@ public class CrowdManager : MonoBehaviour
             }
         }
     }
-
 }
