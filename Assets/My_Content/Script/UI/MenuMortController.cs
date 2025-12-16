@@ -5,18 +5,21 @@ using UnityEngine.EventSystems;
 
 public class MenuMortController : MonoBehaviour
 {
-    [Header("Boutons du Canvas")]
+    [Header("Canvas")]
+    public CanvasFade deathCanvasFade;
+
+    [Header("Boutons")]
     public Button boutonStart;
     public Button boutonMenu;
 
     void Start()
     {
-
+        // Active le canvas (le fade se lance automatiquement)
+        deathCanvasFade.gameObject.SetActive(true);
 
         boutonStart.onClick.AddListener(OnStartClick);
         boutonMenu.onClick.AddListener(OnReloadMap);
     }
-
 
     public void OnStartClick()
     {
@@ -25,18 +28,12 @@ public class MenuMortController : MonoBehaviour
 
     public void OnReloadMap()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.LoadScene("Map_Test_V3");
-    }
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-        CrowdManager cm = Object.FindFirstObjectByType<CrowdManager>();
-        if (cm != null)
-        {
-           // cm.OnPlayerRespawn();
-        }
+        CheckpointData.Reset();
+
+        SceneManager.LoadScene("Map_Test_V3", LoadSceneMode.Single);
     }
 
     void Update()

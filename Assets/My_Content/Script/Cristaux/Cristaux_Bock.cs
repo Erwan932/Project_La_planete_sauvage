@@ -1,33 +1,51 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class InteractableObject : MonoBehaviour
 {
     private bool player = false;
+
+    [Header("FX & Anim")]
     public ParticleSystem interactFX;
     private Animator anim;
 
     [Header("Audio")]
-    public AudioClip destroySound;    // Le son que tu glisseras dans Unity
-    public float soundVolume = 1f;    // Volume du son
+    public AudioClip destroySound;    // Le son à jouer
+    public float soundVolume = 1f;    // Volume du son (tu peux mettre >1)
+    private AudioSource audioSource;
 
     void Start()
     {
         anim = GetComponent<Animator>();
+
+        // Configurer AudioSource
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.volume = soundVolume;
     }
 
     void Update()
     {
         if (player && Input.GetButtonDown("Fire3"))
         {
-            anim.SetTrigger("destroy");
+            // Jouer animation
+            if (anim != null)
+                anim.SetTrigger("destroy");
 
+            // Jouer particules
             if (interactFX != null)
                 interactFX.Play();
 
-            // 🎵 Jouer le son SANS AudioSource
-            if (destroySound != null)
-                AudioSource.PlayClipAtPoint(destroySound, transform.position, soundVolume);
+            // Jouer le son via AudioSource
+            if (destroySound != null && audioSource != null)
+            {
+                audioSource.clip = destroySound;
+                audioSource.volume = soundVolume; // Ajustable >1 si nécessaire
+                audioSource.Play();
+            }
 
+            // Détruire l'objet après 1 seconde
             Destroy(gameObject, 1f);
         }
     }
@@ -37,7 +55,8 @@ public class InteractableObject : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             player = true;
-            anim.SetBool("isPlayerNear", true);
+            if (anim != null)
+                anim.SetBool("isPlayerNear", true);
         }
     }
 
@@ -46,7 +65,8 @@ public class InteractableObject : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             player = false;
-            anim.SetBool("isPlayerNear", false);
+            if (anim != null)
+                anim.SetBool("isPlayerNear", false);
         }
     }
 }

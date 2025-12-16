@@ -9,6 +9,9 @@ TagManager:
   - Trap
   - Tutoriel
   - Rock
+  - Play
+  - Stop
+  - Ground
   layers:
   - Default
   - TransparentFX

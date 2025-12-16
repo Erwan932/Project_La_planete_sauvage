@@ -34,14 +34,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float fallMultiplier = 2.5f;
     [SerializeField] private float lowJumpMultiplier = 2f;
 
+    [Header("Y Action Sound")]
+    [SerializeField] private AudioSource yActionAudio;
 
     void Start()
     {
         originalScale = visual.localScale;
-        originalScale.x = Mathf.Abs(originalScale.x);  // Protection
-        if (movementTrail != null) movementTrail.emitting = false;
-    }
+        originalScale.x = Mathf.Abs(originalScale.x);
 
+        if (movementTrail != null)
+            movementTrail.emitting = false;
+    }
 
     void Update()
     {
@@ -58,7 +61,9 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
         }
 
-        // --- Squash & Stretch (montée) ---
+        // -------- ACTION SUR Y (ANIMATION + SON)
+
+        // Squash & Stretch montée
         if (!isGrounded && rb.linearVelocity.y > 0)
         {
             visual.localScale = new Vector3(
@@ -68,21 +73,17 @@ public class PlayerMovement : MonoBehaviour
             );
         }
 
-        // --- Retour pendant la chute ---
+        // Retour chute
         if (!isGrounded && rb.linearVelocity.y < 0)
         {
             visual.localScale = Vector3.Lerp(
                 visual.localScale,
-                new Vector3(
-                    originalScale.x,
-                    originalScale.y,
-                    originalScale.z
-                ),
+                originalScale,
                 Time.deltaTime * 10f
             );
         }
 
-        // --- Squash à l’atterrissage ---
+        // Squash atterrissage
         if (!wasGroundedLastFrame && isGrounded)
         {
             visual.localScale = new Vector3(
@@ -117,7 +118,6 @@ public class PlayerMovement : MonoBehaviour
             Flip();
     }
 
-
     private void FixedUpdate()
     {
         if (!canMove)
@@ -134,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
 
-        // --- Contrôle du TrailRenderer ---
+        // Trail
         if (movementTrail != null)
         {
             float moveSpeed = Mathf.Abs(rb.linearVelocity.x);
@@ -142,7 +142,6 @@ public class PlayerMovement : MonoBehaviour
 
             movementTrail.time = Mathf.Lerp(trailMinTime, trailMaxTime, t);
             movementTrail.widthMultiplier = Mathf.Lerp(trailMinWidth, trailMaxWidth, t);
-
             movementTrail.emitting = moveSpeed > 0.05f && canMove;
         }
 
@@ -157,31 +156,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public bool IsFacingRight() => isFacingRight;
 
-    public bool IsFacingRight()
-    {
-        return isFacingRight;
-    }
-
-    // ----------- FLIP FIABLE ----------
     private void Flip()
     {
         if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
-
-            // Flip avec rotation Y
             visual.localRotation = Quaternion.Euler(0f, isFacingRight ? 0f : 180f, 0f);
         }
-    } 
-
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
             isGrounded = true;
     }
-
 
     private void UpdateAnimations()
     {
@@ -190,12 +180,10 @@ public class PlayerMovement : MonoBehaviour
         animators.SetBool("IsCrouching", isCrouching);
     }
 
-
     public void EndAttack()
     {
         animators.ResetTrigger("Attack");
     }
-
 
     private IEnumerator ResetScale()
     {
@@ -203,19 +191,14 @@ public class PlayerMovement : MonoBehaviour
         float time = 0f;
 
         Vector3 startScale = visual.localScale;
-        Vector3 targetScale = new Vector3(
-            originalScale.x,
-            originalScale.y,
-            originalScale.z
-        );
 
         while (time < duration)
         {
-            visual.localScale = Vector3.Lerp(startScale, targetScale, time / duration);
+            visual.localScale = Vector3.Lerp(startScale, originalScale, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
 
-        visual.localScale = targetScale;
+        visual.localScale = originalScale;
     }
 }

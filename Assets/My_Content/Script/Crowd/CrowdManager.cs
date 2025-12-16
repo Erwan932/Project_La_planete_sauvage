@@ -37,7 +37,11 @@ public class CrowdManager : MonoBehaviour
     [Header("Respawn Player")]
     public PlayerRespawn playerRespawn;
 
-    // Flag pour éviter de lancer plusieurs coroutines en même temps
+    [Header("Game Over UI")]
+    public GameObject gameOverCanvas;
+    public float gameOverCanvasDuration = 4f;
+
+    // Flag pour éviter plusieurs Game Over
     private bool checkingGameOver = false;
 
     // -----------------------------
@@ -59,7 +63,6 @@ public class CrowdManager : MonoBehaviour
 
         UpdateFollowers();
         CheckMaxFollowersUI();
-
         CheckGameOverCondition();
     }
 
@@ -102,9 +105,7 @@ public class CrowdManager : MonoBehaviour
             Destroy(follower.gameObject);
 
             if (recruitableFollowers.Count == 3)
-            {
                 Debug.Log("Dernière chance");
-            }
 
             CheckGameOverCondition();
         }
@@ -138,7 +139,7 @@ public class CrowdManager : MonoBehaviour
     // -----------------------------
     private void CheckGameOverCondition()
     {
-        // Condition : moins de 2 recrutable ET aucun actif
+        // Condition : aucun follower actif ET moins de 3 recrutables
         if (activeFollowers.Count == 0 && recruitableFollowers.Count < 3)
         {
             if (!checkingGameOver)
@@ -151,15 +152,24 @@ public class CrowdManager : MonoBehaviour
 
     private IEnumerator GameOverDelay()
     {
-        yield return new WaitForSeconds(2f);
+        // Affiche le canvas Game Over
+        if (gameOverCanvas != null)
+            gameOverCanvas.SetActive(true);
 
-        // Vérifie encore la condition après 2 secondes
+        // Bloque les inputs ici si besoin
+
+        yield return new WaitForSeconds(gameOverCanvasDuration);
+
+        // Vérifie encore la condition
         if (activeFollowers.Count == 0 && recruitableFollowers.Count < 3)
         {
-            Debug.Log("Condition de mort atteinte → Reload map après 2 secondes");
-
-            Scene currentScene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(currentScene.name);
+            Debug.Log("GAME OVER → Chargement Menu_Mort");
+            SceneManager.LoadScene("Menu_Mort");
+        }
+        else
+        {
+            if (gameOverCanvas != null)
+                gameOverCanvas.SetActive(false);
         }
 
         checkingGameOver = false;
@@ -184,7 +194,7 @@ public class CrowdManager : MonoBehaviour
                 targetPos += direction.normalized * (distance - followDistance);
 
             follower.SetFormationPosition(targetPos);
-            previousPos = follower.transform.position;
+            previousPos = targetPos;
         }
     }
 

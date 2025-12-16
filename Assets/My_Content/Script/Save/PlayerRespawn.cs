@@ -63,43 +63,33 @@ public class PlayerRespawn : MonoBehaviour
     {
         isRespawning = true;
 
-        // ⛔ Bloquer les inputs joueur
         if (playerMovementScript != null)
             playerMovementScript.enabled = false;
 
-        // 🟥 Activer le canvas
         if (deathCanvas != null)
             deathCanvas.SetActive(true);
 
-        // 🔴 Fade IN
         if (canvasFade != null)
             yield return StartCoroutine(canvasFade.FadeIn());
 
-        // 🚫 Désactiver toutes les DetectionZones
         foreach (var dz in detectionZones)
         {
             if (dz != null)
                 dz.detectionEnabled = false;
         }
 
-        // 🔁 Respawn caché
         transform.position = spawnPosition;
 
-        // 👥 Reset complet des followers
         ResetFollowers();
 
-        // 🟢 Petite pause optionnelle
         yield return new WaitForSeconds(0.2f);
 
-        // 🟩 Fade OUT
         if (canvasFade != null)
             yield return StartCoroutine(canvasFade.FadeOut());
 
-        // 🟦 Désactiver le canvas
         if (deathCanvas != null)
             deathCanvas.SetActive(false);
 
-        // ✅ Réactiver les DetectionZones
         foreach (var dz in detectionZones)
         {
             if (dz != null)
@@ -111,29 +101,23 @@ public class PlayerRespawn : MonoBehaviour
             }
         }
 
-        // ✅ Rendre les inputs joueur
         if (playerMovementScript != null)
             playerMovementScript.enabled = true;
 
         isRespawning = false;
     }
 
-    // -----------------------------
-    // RESET FOLLOWERS (sans toucher CrowdManager)
-    // -----------------------------
     private void ResetFollowers()
     {
         if (crowdManager == null)
             return;
 
-        // Désactiver tous les followers actifs
         foreach (FollowerAI follower in crowdManager.activeFollowers)
         {
             if (follower != null)
                 follower.gameObject.SetActive(false);
         }
 
-        // Vider la liste
         crowdManager.activeFollowers.Clear();
     }
 }
