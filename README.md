@@ -6,18 +6,18 @@ Niveau tutoriel
 Manette recommandée
 Moteur de Jeu : Unity
 
-#Contrôles :
+Contrôles :
 (Modèle Manette Xbox)
 
-#Joystick gauche : Déplacement
+Joystick gauche : Déplacement
 Start : Menu Pause
-#A : Sauter
-#B : Siffler pour briser les cristaux
-#Y : Passer les dialogues
-#X : Libérer les prisonniers
+A : Sauter
+B : Siffler pour briser les cristaux
+Y : Passer les dialogues
+X : Libérer les prisonniers
 
 
-#Synopsis : Ygam est une planète hostile pour les Hommes. 
+Synopsis : Ygam est une planète hostile pour les Hommes. 
 Ils ne sont que l’équivalent d’insectes intelligents pouvant vaguement s'organiser.
 L'espèce maître de la planète, les Draags, sont des humanoïdes privilégiant le savoir avant tout.
 Mais ils n'ont que très peu d'estime pour la faune de leur planète.
