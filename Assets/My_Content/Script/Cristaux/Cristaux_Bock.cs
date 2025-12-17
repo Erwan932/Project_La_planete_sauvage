@@ -11,7 +11,7 @@ public class InteractableObject : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip destroySound;    // Le son à jouer
-    public float soundVolume = 1f;    // Volume du son (tu peux mettre >1)
+    public float soundVolume = 1f;    // Volume du son
     private AudioSource audioSource;
 
     void Start()
@@ -29,6 +29,10 @@ public class InteractableObject : MonoBehaviour
     {
         if (player && Input.GetButtonDown("Fire3"))
         {
+            // 🔊 Jouer le son dès que Fire3 est pressé
+            if (destroySound != null && audioSource != null)
+                audioSource.PlayOneShot(destroySound, soundVolume);
+
             // Jouer animation
             if (anim != null)
                 anim.SetTrigger("destroy");
@@ -36,14 +40,6 @@ public class InteractableObject : MonoBehaviour
             // Jouer particules
             if (interactFX != null)
                 interactFX.Play();
-
-            // Jouer le son via AudioSource
-            if (destroySound != null && audioSource != null)
-            {
-                audioSource.clip = destroySound;
-                audioSource.volume = soundVolume; // Ajustable >1 si nécessaire
-                audioSource.Play();
-            }
 
             // Détruire l'objet après 1 seconde
             Destroy(gameObject, 1f);

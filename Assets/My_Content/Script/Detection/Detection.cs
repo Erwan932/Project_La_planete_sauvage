@@ -24,6 +24,7 @@ public class DetectionZone : MonoBehaviour
     [HideInInspector] public bool scanInProgress = false;
     [HideInInspector] public bool detectionEnabled = true;
     [HideInInspector] public Coroutine detectionCoroutine;
+    private bool PlayerIsRange = false;
 
     void Start()
     {
@@ -41,7 +42,7 @@ public class DetectionZone : MonoBehaviour
             if (!detectionEnabled || crowdManager.playerIsHidden)
                 continue;
 
-            if (!scanInProgress)
+            if (!scanInProgress) // && PlayerIsRange == true)
                 yield return StartCoroutine(ScanSequence());
         }
     }
@@ -62,8 +63,8 @@ public class DetectionZone : MonoBehaviour
         yield return StartCoroutine(FadeOverlay(true, overlayFadeDuration));
         yield return StartCoroutine(FadeOverlay(false, overlayFadeDuration));
 
-        // Hand Attack + HandUp seulement si le joueur n’est pas caché
-        if (!crowdManager.playerIsHidden)
+        // Hand Attack + HandUp seulement si le joueur n’est pas caché et dans la zone
+        if (!crowdManager.playerIsHidden) // && PlayerIsRange)
         {
             handAnimator.SetTrigger(attackTrigger);
             yield return StartCoroutine(WaitForAnimation(handAnimator, "Attack"));
@@ -122,16 +123,18 @@ public class DetectionZone : MonoBehaviour
     {
         if (other.CompareTag("Player") && detectionCoroutine == null)
             detectionCoroutine = StartCoroutine(DetectionRoutine());
+        // PlayerIsRange = true;//PlayerInRange
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player") && detectionCoroutine != null)
         {
-            StopCoroutine(detectionCoroutine);
             detectionCoroutine = null;
             redOverlay.gameObject.SetActive(false);
             scanInProgress = false;
+            // PlayerIsRange = false;
+            //player in range => on stoppe la boucle.
         }
     }
 }

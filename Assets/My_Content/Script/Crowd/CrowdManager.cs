@@ -127,7 +127,7 @@ public class CrowdManager : MonoBehaviour
         else
         {
             if (playerRespawn != null && !playerRespawn.IsRespawning)
-                playerRespawn.StartCoroutine(playerRespawn.DeathSequence());
+                playerRespawn.StartCoroutine(playerRespawn.DeathSequence(true));
         }
 
         CheckGameOverCondition();

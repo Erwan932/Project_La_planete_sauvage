@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerRespawn : MonoBehaviour
 {
@@ -52,14 +53,14 @@ public class PlayerRespawn : MonoBehaviour
 
         if (other.CompareTag("Trap") && !isRespawning)
         {
-            StartCoroutine(DeathSequence());
+            StartCoroutine(DeathSequence(false));
         }
     }
 
     // -----------------------------
     // DEATH / RESPAWN SEQUENCE
     // -----------------------------
-    public IEnumerator DeathSequence()
+    public IEnumerator DeathSequence(bool p_grabbydraag)
     {
         isRespawning = true;
 
@@ -77,10 +78,21 @@ public class PlayerRespawn : MonoBehaviour
             if (dz != null)
                 dz.detectionEnabled = false;
         }
+        if (p_grabbydraag)
+        {
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
 
-        transform.position = spawnPosition;
 
-        ResetFollowers();
+            CheckpointData.Reset();
+
+            SceneManager.LoadScene("Map_Test_V3", LoadSceneMode.Single);
+        }
+        else
+        {
+            transform.position = spawnPosition;
+        }
+            ResetFollowers();
 
         yield return new WaitForSeconds(0.2f);
 
