@@ -1034,7 +1034,7 @@ MonoBehaviour:
   startButton: {fileID: 2005610521}
   infoText: {fileID: 814654561}
   sceneToLoad: Menu_Principal
-  showUIDelay: 20
+  showUIDelay: 20.8
 --- !u!1 &1433217559
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,7 +1952,7 @@ MonoBehaviour:
   rocketTransform: {fileID: 2005796481}
   launchHeight: 5000
   launchDuration: 45
-  shakeDuration: 1.5
+  shakeDuration: 1.9
   shakeStrength: 2
 --- !u!114 &2005796483
 MonoBehaviour:

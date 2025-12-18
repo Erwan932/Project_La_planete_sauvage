@@ -1,123 +1,98 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class KillPlayerWithBlink : MonoBehaviour
+public class TriangleKillZone : MonoBehaviour
 {
-    public string followerLayerName = "Followers";
-    public float timeToKill = 0f;
-    public float blinkSpeed = 0f;
+    [Header("Réglages")]
+    public float timeToKill = 2f;
+    public float blinkSpeed = 6f;
 
-    private int followerLayer;
+    [Header("Layers")]
+    public string cloudLayerName = "Cloud";
+
     private float timer = 0f;
     private bool playerInside = false;
-    private bool playerVisible = false;
-    private GameObject player;
-    private float colliderbound;
-    private SpriteRenderer triangleSR;
+    private bool cloudInside = false;
+
+    private SpriteRenderer sprite;
     private Color originalColor;
 
-    void Start()
+    void Awake()
     {
-        // Récupère l'index du layer Followers
-        followerLayer = LayerMask.NameToLayer(followerLayerName);
-
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null)
-            colliderbound = col.bounds.max.y;
-
-        triangleSR = GetComponent<SpriteRenderer>();
-        if (triangleSR != null)
-            originalColor = triangleSR.color;
+        sprite = GetComponent<SpriteRenderer>();
+        originalColor = sprite.color;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == followerLayer)
+        // Player entre
+        if (other.CompareTag("Player"))
         {
             playerInside = true;
             timer = 0f;
-            player = other.gameObject;
+        }
+
+        // Cloud touche le triangle
+        if (other.gameObject.layer == LayerMask.NameToLayer(cloudLayerName))
+        {
+            cloudInside = true;
+            sprite.enabled = false; // invisible
+            timer = 0f;            // 🔴 STOP attaque
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.layer == followerLayer)
+        // Player sort
+        if (other.CompareTag("Player"))
         {
             playerInside = false;
             timer = 0f;
-            player = null;
+            ResetSprite();
+        }
 
-            if (triangleSR != null)
-                triangleSR.color = originalColor;
+        // Cloud sort
+        if (other.gameObject.layer == LayerMask.NameToLayer(cloudLayerName))
+        {
+            cloudInside = false;
+            sprite.enabled = true; // redevient visible
+            ResetSprite();
         }
     }
 
-    void OnDrawGizmos()
+    void Update()
     {
-        Collider2D col = GetComponent<Collider2D>();
-        if (col == null)
-            return;
-
-        float gizmoBound = col.bounds.max.y;
-        Vector3 vec = new Vector3(transform.position.x, gizmoBound);
-
-        if (player == null)
-            return;
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(vec, player.transform.position);
-    }
-
-    void FixedUpdate()
-    {
-        if (!playerInside || player == null)
-            return;
-
-        var vec = new Vector3(transform.position.x, colliderbound - 0.2f);
-        RaycastHit2D hit = Physics2D.Raycast(vec, player.transform.position - vec, 100f, LayerMask.GetMask("Cloud", "Followers"));
-
-        // Vérifie si le raycast touche un follower
-        playerVisible = (hit.collider != null && hit.collider.gameObject.layer == followerLayer);
-
-        bool CloudVisible = (hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("Cloud"));
-        
-        if (CloudVisible)
+        // 🔒 Cloud présent → AUCUNE attaque
+        if (cloudInside)
         {
-           triangleSR.enabled = false;
-        }
-
-        else
-        {
-           triangleSR.enabled = true;
-        }
-
-        if (!playerVisible)
-        {
-            if (triangleSR != null)
-                triangleSR.color = originalColor;
+            timer = 0f;
+            ResetSprite();
             return;
         }
 
-        timer += Time.deltaTime;
-
-        // Effet clignotement
-        if (triangleSR != null)
+        // Player détecté → attaque
+        if (playerInside)
         {
+            timer += Time.deltaTime;
+
             float t = Mathf.Abs(Mathf.Sin(Time.time * blinkSpeed));
-            triangleSR.color = Color.Lerp(originalColor, Color.red, t);
-        }
+            sprite.color = Color.Lerp(originalColor, Color.red, t);
 
-        if (timer >= timeToKill)
-        {
-            KillPlayer();
+            if (timer >= timeToKill)
+            {
+                KillPlayer();
+            }
         }
     }
 
     void KillPlayer()
     {
-        Debug.Log("Un follower est mort dans la zone !");
+        Debug.Log("Player tué par le triangle !");
         SceneManager.LoadScene("Menu_Mort");
+    }
+
+    void ResetSprite()
+    {
+        sprite.color = originalColor;
     }
 }
