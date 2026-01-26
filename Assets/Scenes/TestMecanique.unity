@@ -521,7 +521,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Camera_Movement
   player: {fileID: 1966699276}
   offset: {x: 4, y: 1.65, z: -5}
-  speed: 2
+  followSpeed: 3
+  defaultSize: 5
+  zoomSpeed: 3
 --- !u!1001 &292886222
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -593,7 +595,6 @@ GameObject:
   m_Component:
   - component: {fileID: 302413377}
   - component: {fileID: 302413378}
-  - component: {fileID: 302413380}
   - component: {fileID: 302413379}
   m_Layer: 0
   m_Name: Triangle
@@ -611,7 +612,7 @@ Transform:
   m_GameObject: {fileID: 302413376}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.05381764, z: -0, w: -0.99855083}
-  m_LocalPosition: {x: 0.4017, y: -6.8837, z: 3.5987}
+  m_LocalPosition: {x: 35.97, y: -3.68, z: -0.25}
   m_LocalScale: {x: 8.020582, y: 10.915043, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -725,21 +726,6 @@ PolygonCollider2D:
       - {x: -0.5, y: -0.28866667}
       - {x: 0.5, y: -0.28866667}
   m_UseDelaunayMesh: 0
---- !u!114 &302413380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 302413376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8468e7d1f4d049b4ba5aba32d6f17ad8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  followerLayerName: Followers
-  timeToKill: 2
-  blinkSpeed: 8
 --- !u!1 &310033799
 GameObject:
   m_ObjectHideFlags: 0
@@ -2628,10 +2614,9 @@ MonoBehaviour:
   - {fileID: 831278857}
   typingSpeed: 0.1
   delayBetweenLines: 1
-  lines:
-  - J'ai besion d'aide!
-  - Sauve moi stp
-  extraLine: Merci je t'aime
+  nameID: 
+  defaultLines: []
+  triggerText: 
 --- !u!61 &1587011702
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3104,6 +3089,7 @@ MonoBehaviour:
   trailMaxWidth: 0.5
   fallMultiplier: 2.5
   lowJumpMultiplier: 2
+  yActionAudio: {fileID: 0}
 --- !u!199 &1966699278
 ParticleSystemRenderer:
   serializedVersion: 6
